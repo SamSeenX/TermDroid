@@ -2,6 +2,14 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.0] - 2026-11-05
+
+### Added
+* Tab 6: Live Notification Stream Deck parsing active notifications, package sources, titles, and body snippets (`dumpsys notification --noredact`).
+* Headless Mobile Audio Forwarder streaming phone audio to macOS speakers via low-latency Opus (`scrcpy --no-video --audio-codec=opus --audio-buffer=40`).
+* Hotkey `o` on Tab 1 to trigger instant phone-to-Mac audio forwarding.
+* Headless CLI command `./termdroid audio` to stream mobile sound directly from the terminal.
+
 ## [v0.4.6] - 2026-11-05
 
 ### Added

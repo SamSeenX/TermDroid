@@ -32,6 +32,9 @@ func handleCLICommand(command string, args []string) {
 	case "swipe":
 		handleSwipeCmd(exec, args)
 
+	case "audio":
+		handleAudioCmd(exec)
+
 	case "unlock":
 		handleUnlockCmd(exec, args)
 

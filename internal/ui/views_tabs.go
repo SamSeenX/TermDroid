@@ -19,6 +19,8 @@ func (m Model) renderActiveTab() string {
 		return m.renderLogcatTab()
 	case TabActions:
 		return m.renderKeypadScreen()
+	case TabNotifications:
+		return m.renderNotificationsTab()
 	}
 	return ""
 }
@@ -36,6 +38,7 @@ func (m Model) renderMirrorTab() string {
 	s.WriteString(hotkey("m", "Launch Interactive Scrcpy Stream (Low Latency, 1200p, 60fps)"))
 	s.WriteString(hotkey("p", "Launch Presentation Mode (Device Display Turned Off)"))
 	s.WriteString(hotkey("v", "Start Real-Time Screen Recording (Direct MP4 to Desktop)"))
+	s.WriteString(hotkey("o", "Stream Mobile Audio to Mac Speakers (Headless Opus Audio)"))
 	s.WriteString(hotkey("s", "Capture High-Res Screenshot to Desktop"))
 	s.WriteString(hotkey("l", "1-Tap Guarded Lockscreen Unlock (Auto-inject PIN from sleep)"))
 	s.WriteString(hotkey("c", "Push Mac Clipboard ⇋ [y] Pull Phone Clipboard"))
