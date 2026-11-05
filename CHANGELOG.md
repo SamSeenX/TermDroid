@@ -2,6 +2,11 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.2] - 2026-11-05
+
+### Added
+* Automatic macOS Preview launcher upon capturing screenshots via `s` or `./termdroid screenshot`, opening the saved Desktop PNG instantly for review.
+
 ## [v0.5.1] - 2026-11-05
 
 ### UX & Keybindings
