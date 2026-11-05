@@ -45,9 +45,16 @@ func (m *Model) onTabChanged() tea.Cmd {
 		return LoadVitalsCmd(m.Executor)
 	case TabStorage:
 		if m.Storage == nil {
+			if !m.IsScanningStorage {
+				m.IsScanningStorage = true
+				m.IsLoading = true
+				return LoadStorageCmd(m.Executor)
+			}
 			m.IsLoading = true
-			return LoadStorageCmd(m.Executor)
+			return nil
 		}
+		m.IsLoading = false
+		return nil
 	case TabProcesses:
 		m.IsLoading = true
 		return LoadProcessesCmd(m.Executor)

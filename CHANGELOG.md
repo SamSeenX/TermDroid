@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.6] - 2026-11-05
+
+### Performance & UX
+* Persistent in-memory storage caching across tab transitions, keeping DiskMan scan results instantly visible when switching tabs.
+* Decoupled background storage scanner allowing you to navigate other tabs while a scan completes asynchronously.
+* Manual refresh available via `r` on Tab 2 when you wish to force a new storage scan.
+
 ## [v0.5.5] - 2026-11-05
 
 ### Fixed

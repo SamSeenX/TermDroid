@@ -62,6 +62,7 @@ type Model struct {
 	SavedPIN      string
 	TextModalOpen bool
 	TextInput     string
+	IsScanningStorage bool
 }
 
 func InitialModel() Model {
