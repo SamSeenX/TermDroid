@@ -45,6 +45,8 @@ func (m Model) renderMirrorTab() string {
 	s.WriteString(hotkey("c", "Push Mac Clipboard ⇋ [y] Pull Phone Clipboard"))
 	s.WriteString(hotkey("w", "Switch USB Connection to Wireless TCP/IP (Port 5555)"))
 	s.WriteString("\n")
+	s.WriteString(StyleHelp.Render("  Window Shortcuts: [Opt+h] Home | [Opt+b] Back | [Opt+s] Apps | [Opt+↑/↓] Volume | [Opt+p] Power") + "\n")
+	s.WriteString("\n")
 
 	if len(m.Devices) > 0 {
 		dev := m.Devices[m.ActiveDevice]
@@ -64,10 +66,16 @@ func (m Model) renderMirrorTab() string {
 
 func (m Model) renderStorageTab() string {
 	var s strings.Builder
-	s.WriteString(StyleHeader.Render("DiskMan Mobile Storage Breakdown (/sdcard)") + "\n\n")
+	currentPath := m.StoragePath
+	if currentPath == "" {
+		currentPath = "/sdcard"
+	}
+
+	title := fmt.Sprintf("DiskMan Storage: %s", currentPath)
+	s.WriteString(StyleHeaderMuted.Render(title) + "\n\n")
 
 	if m.Storage == nil || len(m.Storage.Items) == 0 {
-		s.WriteString(StyleHelp.Render("  No storage data. Press [r] to trigger deep scan.") + "\n")
+		s.WriteString(StyleHelp.Render("  Scanning directory breakdown... Press [r] to refresh.") + "\n")
 		return s.String()
 	}
 
@@ -75,7 +83,7 @@ func (m Model) renderStorageTab() string {
 		m.Storage.UsedSpace, m.Storage.FreeSpace, m.Storage.TotalSpace, m.Storage.Percent)
 	s.WriteString(StyleHelp.Render(header) + "\n\n")
 
-	limit := 10
+	limit := 12
 	if len(m.Storage.Items) < limit {
 		limit = len(m.Storage.Items)
 	}
@@ -85,14 +93,22 @@ func (m Model) renderStorageTab() string {
 		cursor := "  "
 		style := StyleNormalRow
 		if i == m.StorageCursor {
-			cursor = "> "
+			cursor = "▶ "
 			style = StyleSelectedRow
 		}
-		line := fmt.Sprintf("%s%-10s  %-20s  %s", cursor, item.SizeHuman, item.Category, item.Path)
+		icon := "📁 "
+		if !item.IsDir {
+			icon = "📄 "
+		}
+		line := fmt.Sprintf("%s%-10s  %-16s  %s%s", cursor, item.SizeHuman, item.Category, icon, item.Path)
 		s.WriteString(style.Render(line) + "\n")
 	}
 
-	s.WriteString("\n" + StyleHelp.Render("  [j/k] Navigate | [r] Re-scan | [c] Purge Junk App Cache"))
+	navHint := "▲/▼: Select | [Enter]: Open Folder | [Esc/Backspace]: Go Up | [r]: Re-scan | [c]: Purge Cache"
+	if len(m.StorageStack) > 0 {
+		navHint = fmt.Sprintf("▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Back to %s | [r]: Re-scan", m.StorageStack[len(m.StorageStack)-1])
+	}
+	s.WriteString("\n" + StyleHelp.Render("  "+navHint))
 	return s.String()
 }
 

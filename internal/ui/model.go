@@ -48,6 +48,8 @@ type Model struct {
 	LogLines      []string
 	Notifications []diagnostics.NotificationItem
 	StorageCursor int
+	StoragePath   string
+	StorageStack  []string
 	ProcessCursor int
 	NotifCursor   int
 	KeypadCol     int
