@@ -68,8 +68,16 @@ func (m Model) handleConfirmDelete() (tea.Model, tea.Cmd) {
 		target := m.DeleteTarget
 		m.ConfirmDelete = false
 		m.DeleteTarget = ""
+		parentPath := m.StoragePath
+		if parentPath == "" {
+			parentPath = "/sdcard"
+		}
+		m.Storage = nil
+		m.StorageCursor = 0
+		m.IsLoading = true
+		m.IsScanningStorage = true
 		m.Status = fmt.Sprintf("Deleting %s from device...", target)
-		return m, DeleteStorageItemCmd(m.Executor, target, m.StoragePath)
+		return m, DeleteStorageItemCmd(m.Executor, target, parentPath)
 	}
 	return m, nil
 }
