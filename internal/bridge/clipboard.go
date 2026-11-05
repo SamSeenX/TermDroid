@@ -41,11 +41,28 @@ func (e *Executor) PushClipboardToDevice() (string, error) {
 
 func (e *Executor) PullClipboardFromDevice() (string, error) {
 	out, err := e.RunADBWithTimeout(4*time.Second, "shell", "cmd", "clipboard", "get")
-	if err != nil || strings.TrimSpace(out) == "" {
-		return "", errors.New("android clipboard is empty or inaccessible")
+	text := strings.TrimSpace(out)
+
+	if err != nil || text == "" {
+		dumpOut, dumpErr := e.RunADBWithTimeout(3*time.Second, "shell", "dumpsys", "clipboard")
+		if dumpErr == nil {
+			for _, line := range strings.Split(dumpOut, "\n") {
+				line = strings.TrimSpace(line)
+				if strings.HasPrefix(line, "text=") {
+					val := strings.TrimPrefix(line, "text=")
+					if val != "" {
+						text = val
+						break
+					}
+				}
+			}
+		}
 	}
 
-	text := strings.TrimSpace(out)
+	if text == "" {
+		return "Tip: Android 13+ restricts background clipboard reads. When Scrcpy mirror is open [m], copied text syncs to Mac automatically.", nil
+	}
+
 	pbCmd := exec.Command("pbcopy")
 	pbCmd.Stdin = strings.NewReader(text)
 	if err := pbCmd.Run(); err != nil {
