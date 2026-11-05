@@ -2,6 +2,14 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.5] - 2026-11-05
+
+### UI & Styling
+* Revamped visual aesthetics with a cyber-cockpit high-contrast theme featuring electric cyan, neon violet, and crimson accents.
+* Enhanced header bar with bold inverted brand badge and dynamic battery charging and temperature telemetry glyphs.
+* Styled hotkey badges in tab views with distinct contrast tags.
+* Upgraded Hardware Keypad table cards with double borders and cursor pointers (▶).
+
 ## [v0.4.4] - 2026-11-05
 
 ### Security & Safety

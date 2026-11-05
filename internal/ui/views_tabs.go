@@ -3,6 +3,8 @@ package ui
 import (
 	"fmt"
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 func (m Model) renderActiveTab() string {
@@ -23,23 +25,35 @@ func (m Model) renderActiveTab() string {
 
 func (m Model) renderMirrorTab() string {
 	var s strings.Builder
-	s.WriteString(StyleHeader.Render("Live Mirror & Desktop Control") + "\n\n")
-	s.WriteString(StyleNormalRow.Render("  [m] Launch Interactive Scrcpy Stream (Low Latency)") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [p] Launch Presentation Mode (Device Screen Off)") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [v] Start Real-Time Screen Recording (MP4 to Desktop)") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [s] Take Instant Screenshot to Desktop") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [c] Push Mac Clipboard to Phone | [y] Pull Phone Clipboard") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [w] Switch from USB to Wireless TCP/IP (Port 5555)") + "\n\n")
+	s.WriteString(StyleHeaderMuted.Render("◈ Live Mirror & Desktop Stream Control") + "\n\n")
+
+	hotkey := func(k string, desc string) string {
+		tag := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#000000")).Background(ColorSecondary).Render(" " + k + " ")
+		text := lipgloss.NewStyle().Foreground(ColorText).Render(" " + desc)
+		return fmt.Sprintf("  %s%s\n", tag, text)
+	}
+
+	s.WriteString(hotkey("m", "Launch Interactive Scrcpy Stream (Low Latency, 1200p, 60fps)"))
+	s.WriteString(hotkey("p", "Launch Presentation Mode (Device Display Turned Off)"))
+	s.WriteString(hotkey("v", "Start Real-Time Screen Recording (Direct MP4 to Desktop)"))
+	s.WriteString(hotkey("s", "Capture High-Res Screenshot to Desktop"))
+	s.WriteString(hotkey("l", "1-Tap Guarded Lockscreen Unlock (Auto-inject PIN from sleep)"))
+	s.WriteString(hotkey("c", "Push Mac Clipboard ⇋ [y] Pull Phone Clipboard"))
+	s.WriteString(hotkey("w", "Switch USB Connection to Wireless TCP/IP (Port 5555)"))
+	s.WriteString("\n")
 
 	if len(m.Devices) > 0 {
 		dev := m.Devices[m.ActiveDevice]
-		mode := "USB Debugging"
+		mode := "USB Bridge"
+		badgeColor := ColorPrimary
 		if dev.IsWireless {
-			mode = "Wireless TCP/IP"
+			mode = "Wireless Wi-Fi"
+			badgeColor = ColorSecondary
 		}
-		s.WriteString(StyleHelp.Render(fmt.Sprintf("  Target Device: %s (%s) via %s", dev.Model, dev.ID, mode)) + "\n")
+		badge := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#000000")).Background(badgeColor).Render(" " + mode + " ")
+		s.WriteString(fmt.Sprintf("  Target: %s [%s] %s\n", dev.Model, dev.ID, badge))
 	} else {
-		s.WriteString(StyleErrorBadge.Render("  No Android device detected. Plug in USB cable.") + "\n")
+		s.WriteString(StyleErrorBadge.Render("  No Android device detected. Connect via USB or Wi-Fi.") + "\n")
 	}
 	return s.String()
 }

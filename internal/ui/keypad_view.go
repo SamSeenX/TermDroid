@@ -16,21 +16,27 @@ var colHeaders = []string{
 
 func (m Model) renderKeypadScreen() string {
 	var s strings.Builder
-	s.WriteString(StyleHeader.Render("Hardware Keypad & Control Deck") + "\n\n")
+	s.WriteString(StyleHeaderMuted.Render("◈ Hardware Keypad & Button Control Deck") + "\n\n")
 
 	cols := bridge.GetKeypadColumns()
 	var renderedCols []string
 
 	for colIdx, col := range cols {
 		var colBuf strings.Builder
-		header := StyleCard.Render(colHeaders[colIdx])
+		header := lipgloss.NewStyle().
+			Bold(true).
+			Foreground(ColorPrimary).
+			Border(lipgloss.DoubleBorder()).
+			BorderForeground(ColorSecondary).
+			Padding(0, 1).
+			Render(colHeaders[colIdx])
 		colBuf.WriteString(header + "\n")
 
 		for rowIdx, act := range col {
 			cursor := "  "
 			style := StyleNormalRow
 			if colIdx == m.KeypadCol && rowIdx == m.KeypadRow {
-				cursor = "> "
+				cursor = "▶ "
 				style = StyleSelectedRow
 			}
 

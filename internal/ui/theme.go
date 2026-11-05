@@ -5,16 +5,23 @@ import (
 )
 
 var (
-	ColorPrimary   = lipgloss.Color("#00D7AF")
-	ColorSecondary = lipgloss.Color("#5F87AF")
-	ColorAccent    = lipgloss.Color("#FF5F87")
-	ColorMuted     = lipgloss.Color("#626262")
-	ColorBackground= lipgloss.Color("#1A1B26")
-	ColorText      = lipgloss.Color("#D0D0D0")
-	ColorSuccess   = lipgloss.Color("#5FD787")
-	ColorWarning   = lipgloss.Color("#FFAF00")
+	ColorPrimary   = lipgloss.Color("#00FFC2")
+	ColorSecondary = lipgloss.Color("#7957D5")
+	ColorAccent    = lipgloss.Color("#FF3860")
+	ColorMuted     = lipgloss.Color("#7A7E9D")
+	ColorBackground= lipgloss.Color("#0F111A")
+	ColorSurface   = lipgloss.Color("#1A1D2B")
+	ColorText      = lipgloss.Color("#ECEFF4")
+	ColorSuccess   = lipgloss.Color("#48C774")
+	ColorWarning   = lipgloss.Color("#FFDD57")
 
 	StyleHeader = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#000000")).
+			Background(ColorPrimary).
+			Padding(0, 2)
+
+	StyleHeaderMuted = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(ColorPrimary).
 			Padding(0, 1)
@@ -30,14 +37,14 @@ var (
 			Padding(0, 2)
 
 	StyleCard = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
+			Border(lipgloss.DoubleBorder()).
 			BorderForeground(ColorSecondary).
 			Padding(0, 1)
 
 	StyleSelectedRow = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(ColorPrimary).
-			Background(lipgloss.Color("#262936"))
+			Background(lipgloss.Color("#2B2144"))
 
 	StyleNormalRow = lipgloss.NewStyle().
 			Foreground(ColorText)

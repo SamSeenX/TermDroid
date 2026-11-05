@@ -36,24 +36,28 @@ func (m Model) View() string {
 }
 
 func (m Model) renderHeader() string {
-	title := StyleHeader.Render("TERMDROID  macOS Android Control Cockpit")
+	brand := StyleHeader.Render(" TERMDROID ")
+	subtitle := lipgloss.NewStyle().Bold(true).Foreground(ColorSecondary).Render(" macOS ⇋ Android Control Cockpit")
+	titleLine := fmt.Sprintf("%s %s", brand, subtitle)
+
 	var vitals string
 	if m.Vitals != nil {
-		charging := ""
-		if m.Vitals.BatteryCharging {
-			charging = "⚡ "
+		charging := "⚡ "
+		if !m.Vitals.BatteryCharging {
+			charging = "🔋 "
 		}
-		vitals = fmt.Sprintf("Battery: %s%s (%s)  Temp: %s",
+		battColor := ColorSuccess
+		vitals = fmt.Sprintf("%sBattery: %s (%s)  🌡️ Temp: %s",
 			charging,
-			m.Vitals.BatteryLevel,
+			lipgloss.NewStyle().Bold(true).Foreground(battColor).Render(m.Vitals.BatteryLevel),
 			m.Vitals.BatteryHealth,
 			m.Vitals.BatteryTemperature,
 		)
 	} else {
-		vitals = "Battery: Checking..."
+		vitals = "🔋 Battery: Checking status..."
 	}
 
-	hud := StyleCard.Render(fmt.Sprintf("%s\n%s", title, StyleHelp.Render(vitals)))
+	hud := StyleCard.Render(fmt.Sprintf("%s\n%s", titleLine, StyleHelp.Render(vitals)))
 	return hud
 }
 
