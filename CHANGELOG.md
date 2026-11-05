@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.7.0] - 2026-11-05
+
+### UI & Aesthetics
+* Integrated a bold cyberpunk ASCII art logo header rendered in electric cyan on top of the dashboard.
+* Polished subtitle layout and unified telemetry HUD presentation.
+
 ## [v0.6.4] - 2026-11-05
 
 ### UX & Performance
