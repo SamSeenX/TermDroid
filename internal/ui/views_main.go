@@ -40,9 +40,9 @@ func (m Model) View() string {
 }
 
 func (m Model) renderHeader() string {
-	brand := StyleHeader.Render(" TERMDROID ")
-	subtitle := lipgloss.NewStyle().Bold(true).Foreground(ColorSecondary).Render(" macOS ⇋ Android Control Cockpit")
-	titleLine := fmt.Sprintf("%s %s", brand, subtitle)
+	ascii := renderAsciiHeader()
+	subtitle := lipgloss.NewStyle().Bold(true).Foreground(ColorSecondary).Render("macOS ⇋ Android Control Cockpit & Diagnostics")
+	titleLine := fmt.Sprintf("%s\n  %s", ascii, subtitle)
 
 	var vitals string
 	if m.Vitals != nil {
