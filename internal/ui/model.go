@@ -48,6 +48,7 @@ type Model struct {
 	Width         int
 	Height        int
 	IsLoading     bool
+	Wizard        WizardState
 }
 
 func InitialModel() Model {
@@ -55,16 +56,18 @@ func InitialModel() Model {
 	return Model{
 		Executor:      exec,
 		ActiveTab:     TabMirror,
-		Status:        "Initializing TermDroid...",
+		Status:        "Monitoring for Android devices...",
 		StorageCursor: 0,
 		ProcessCursor: 0,
-		IsLoading:     true,
+		IsLoading:     false,
+		Wizard:        InitialWizardState(),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
 	return tea.Batch(
 		LoadDevicesCmd(m.Executor),
+		TickCmd(),
 		tea.EnterAltScreen,
 	)
 }

@@ -67,3 +67,34 @@ func (e *Executor) SwitchToWireless(port string) (string, error) {
 
 	return target, fmt.Errorf("connection response unexpected: %s", out)
 }
+
+func (e *Executor) PairDevice(ipPort, code string) (string, error) {
+	ipPort = strings.TrimSpace(ipPort)
+	code = strings.TrimSpace(code)
+
+	if ipPort == "" || code == "" {
+		return "", errors.New("ip:port and pairing code are both required")
+	}
+
+	pairOut, err := e.RunADBWithTimeout(8*time.Second, "pair", ipPort, code)
+	if err != nil {
+		return "", fmt.Errorf("pairing failed: %w", err)
+	}
+
+	if !strings.Contains(pairOut, "Successfully paired") && !strings.Contains(pairOut, "paired to") {
+		return "", fmt.Errorf("unexpected pairing result: %s", pairOut)
+	}
+
+	connectTarget := ipPort
+	parts := strings.Split(ipPort, ":")
+	if len(parts) == 2 {
+		connectTarget = fmt.Sprintf("%s:5555", parts[0])
+	}
+
+	connectOut, err := e.RunADBWithTimeout(8*time.Second, "connect", connectTarget)
+	if err != nil {
+		connectOut, _ = e.RunADBWithTimeout(6*time.Second, "connect", ipPort)
+	}
+
+	return fmt.Sprintf("Paired with %s (%s)", ipPort, strings.TrimSpace(connectOut)), nil
+}
