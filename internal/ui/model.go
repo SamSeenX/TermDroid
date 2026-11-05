@@ -52,10 +52,14 @@ type Model struct {
 	Height        int
 	IsLoading     bool
 	Wizard        WizardState
+	PinModalOpen  bool
+	PinInput      string
+	SavedPIN      string
 }
 
 func InitialModel() Model {
 	exec := bridge.NewExecutor("")
+	cfg := bridge.LoadConfig()
 	return Model{
 		Executor:      exec,
 		ActiveTab:     TabMirror,
@@ -66,6 +70,7 @@ func InitialModel() Model {
 		KeypadRow:     0,
 		IsLoading:     false,
 		Wizard:        InitialWizardState(),
+		SavedPIN:      cfg.SavedPIN,
 	}
 }
 

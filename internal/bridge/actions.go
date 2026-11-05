@@ -100,3 +100,21 @@ func (e *Executor) PushText(text string) error {
 	_, err := e.RunADBWithTimeout(3*time.Second, "shell", "input", "text", escaped)
 	return err
 }
+
+func (e *Executor) UnlockDevice(pin string) error {
+	e.RunADBWithTimeout(2*time.Second, "shell", "input", "keyevent", "224")
+	time.Sleep(150 * time.Millisecond)
+
+	e.RunADBWithTimeout(2*time.Second, "shell", "input", "swipe", "500", "1500", "500", "500", "150")
+	time.Sleep(200 * time.Millisecond)
+
+	if pin != "" {
+		if err := e.PushText(pin); err != nil {
+			return err
+		}
+		time.Sleep(100 * time.Millisecond)
+		_, err := e.RunADBWithTimeout(2*time.Second, "shell", "input", "keyevent", "66")
+		return err
+	}
+	return nil
+}

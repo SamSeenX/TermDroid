@@ -12,6 +12,10 @@ func (m Model) View() string {
 		return m.renderWizard()
 	}
 
+	if m.PinModalOpen {
+		return m.renderPinModal()
+	}
+
 	var b strings.Builder
 
 	b.WriteString(m.renderHeader())
@@ -67,6 +71,6 @@ func (m Model) renderTabs() string {
 
 func (m Model) renderStatusBar() string {
 	status := StyleNormalRow.Render("Status: " + m.Status)
-	shortcuts := StyleHelp.Render("Tab: Tabs | d: Switch Device | x: Forget | a: Add | m: Mirror | s: Shot | r: Refresh | q: Quit")
+	shortcuts := StyleHelp.Render("Tab: Tabs | l: 1-Tap Unlock | m: Mirror | d: Switch Device | s: Shot | r: Refresh | q: Quit")
 	return fmt.Sprintf("\n%s\n%s", status, shortcuts)
 }

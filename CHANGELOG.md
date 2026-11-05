@@ -2,6 +2,19 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.3] - 2026-11-05
+
+### Added
+* 1-Tap Lockscreen PIN Bypass Macro binding `l` to wake screen, swipe up, inject saved PIN, and submit in <200ms.
+* Secure local PIN persistence in `~/.config/termdroid/config.json` with 0600 file permissions.
+* Interactive PIN configuration modal prompt with masked password input (press `L` to edit or wipe).
+* Headless CLI unlock command (`termdroid unlock [PIN]`).
+* Mute Volume hotkey `u` preserved for audio control while `l` handles instant unlock.
+
+### Refactored
+* Modularized UI directional navigation and tab transitions into `internal/ui/navigation.go`.
+* Extracted PIN modal prompt into `internal/ui/pin_modal.go` ensuring all files strictly remain under 180 lines.
+
 ## [v0.4.2] - 2026-11-05
 
 ### Fixed

@@ -21,6 +21,7 @@ func GetKeypadColumns() [][]KeyActionItem {
 		{Name: "Power Button", Code: "26", Shortcut: "o"},
 		{Name: "Screen Sleep", Code: "223"},
 		{Name: "Wakeup Device", Code: "224"},
+		{Name: "Unlock / Swipe Up", IsShell: true, CmdArgs: []string{"input", "swipe", "500", "1500", "500", "500", "150"}, Shortcut: "k"},
 		{Name: "Voice Assistant", Code: "231"},
 		{Name: "Menu Key", Code: "82"},
 		{Name: "Notifications", IsShell: true, CmdArgs: []string{"cmd", "statusbar", "expand-notifications"}, Shortcut: "j"},

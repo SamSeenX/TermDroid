@@ -44,6 +44,29 @@ func handleSwipeCmd(exec *bridge.Executor, args []string) {
 	fmt.Printf("Injected swipe from (%d, %d) to (%d, %d) in %dms\n", x1, y1, x2, y2, duration)
 }
 
+func handleUnlockCmd(exec *bridge.Executor, args []string) {
+	pin := ""
+	if len(args) > 0 {
+		pin = args[0]
+		bridge.SaveConfig(bridge.Config{SavedPIN: pin})
+	} else {
+		cfg := bridge.LoadConfig()
+		pin = cfg.SavedPIN
+	}
+
+	if pin != "" {
+		fmt.Println("Waking device, swiping up, and injecting PIN...")
+	} else {
+		fmt.Println("No PIN specified. Performing wake and swipe up gesture...")
+	}
+
+	if err := exec.UnlockDevice(pin); err != nil {
+		fmt.Printf("Unlock error: %v\n", err)
+		return
+	}
+	fmt.Println("Unlock sequence executed successfully.")
+}
+
 func handleClipboardCmd(exec *bridge.Executor, args []string) {
 	sub := "push"
 	if len(args) > 0 {
