@@ -2,8 +2,47 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"termdroid/internal/bridge"
 )
+
+func handleTapCmd(exec *bridge.Executor, args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage: termdroid tap <X> <Y>")
+		return
+	}
+	x, err1 := strconv.Atoi(args[0])
+	y, err2 := strconv.Atoi(args[1])
+	if err1 != nil || err2 != nil {
+		fmt.Println("Error: coordinates must be integers")
+		return
+	}
+	if err := exec.Tap(x, y); err != nil {
+		fmt.Printf("Tap injection error: %v\n", err)
+		return
+	}
+	fmt.Printf("Injected tap at (%d, %d)\n", x, y)
+}
+
+func handleSwipeCmd(exec *bridge.Executor, args []string) {
+	if len(args) < 4 {
+		fmt.Println("Usage: termdroid swipe <X1> <Y1> <X2> <Y2> [duration_ms]")
+		return
+	}
+	x1, _ := strconv.Atoi(args[0])
+	y1, _ := strconv.Atoi(args[1])
+	x2, _ := strconv.Atoi(args[2])
+	y2, _ := strconv.Atoi(args[3])
+	duration := 300
+	if len(args) >= 5 {
+		duration, _ = strconv.Atoi(args[4])
+	}
+	if err := exec.Swipe(x1, y1, x2, y2, duration); err != nil {
+		fmt.Printf("Swipe injection error: %v\n", err)
+		return
+	}
+	fmt.Printf("Injected swipe from (%d, %d) to (%d, %d) in %dms\n", x1, y1, x2, y2, duration)
+}
 
 func handleClipboardCmd(exec *bridge.Executor, args []string) {
 	sub := "push"

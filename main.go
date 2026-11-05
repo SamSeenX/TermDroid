@@ -30,6 +30,8 @@ func printHelp() {
 	fmt.Println("  termdroid record          Record live mirror stream to Desktop MP4")
 	fmt.Println("  termdroid scan            Run DiskMan storage inspection on device")
 	fmt.Println("  termdroid screenshot      Capture current screen frame to desktop")
+	fmt.Println("  termdroid tap <x> <y>     Inject headless touch tap at coordinates")
+	fmt.Println("  termdroid swipe x1 y1 x2 y2 Inject headless touch swipe gesture")
 	fmt.Println("  termdroid clipboard       Push or pull clipboard (push/pull)")
 	fmt.Println("  termdroid install <apk>   Sideload APK package onto device")
 	fmt.Println("  termdroid open <url>      Open web URL in default mobile browser")
