@@ -67,6 +67,6 @@ func (m Model) renderTabs() string {
 
 func (m Model) renderStatusBar() string {
 	status := StyleNormalRow.Render("Status: " + m.Status)
-	shortcuts := StyleHelp.Render("Tab: Cycle Tabs | m: Mirror | p: Pres. Mode | s: Shot | w: Wi-Fi | r: Refresh | q: Quit")
+	shortcuts := StyleHelp.Render("Tab: Tabs | d: Switch Device | x: Forget | a: Add | m: Mirror | s: Shot | r: Refresh | q: Quit")
 	return fmt.Sprintf("\n%s\n%s", status, shortcuts)
 }

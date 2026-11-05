@@ -105,6 +105,26 @@ func TakeScreenshotCmd(exec *bridge.Executor) tea.Cmd {
 	}
 }
 
+func ExecuteKeypadCmd(exec *bridge.Executor, action bridge.KeyActionItem) tea.Cmd {
+	return func() tea.Msg {
+		res, err := exec.ExecuteKeyAction(action)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Key error: %v", err))
+		}
+		return StatusMsg(res)
+	}
+}
+
+func DisconnectDeviceCmd(exec *bridge.Executor, target string) tea.Cmd {
+	return func() tea.Msg {
+		err := exec.DisconnectDevice(target)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Disconnect error: %v", err))
+		}
+		return StatusMsg(fmt.Sprintf("Disconnected %s", target))
+	}
+}
+
 func SendKeyCmd(exec *bridge.Executor, key bridge.KeyAction) tea.Cmd {
 	return func() tea.Msg {
 		err := exec.SendKeyEvent(key)
