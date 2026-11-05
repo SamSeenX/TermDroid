@@ -2,6 +2,19 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.0] - 2026-11-05
+
+### Added
+* Real-time MP4 screen recording hotkey (v) saving directly to Desktop.
+* Bi-directional clipboard synchronization (c to push Mac clipboard, y to pull phone clipboard).
+* DiskMan application cache purger hotkey (c on Tab 2) removing junk app caches.
+* CLI APK sideloading command (`termdroid install <path.apk>`).
+* CLI URL dispatcher command (`termdroid open <url>`).
+* Reverse port forwarding command (`termdroid reverse <port>`).
+
+### Refactored
+* Modularized CLI subcommand dispatching into `cli_commands.go` and `cli_utils.go` maintaining strict compliance with the 200-line rule.
+
 ## [v0.3.1] - 2026-11-05
 
 ### Added

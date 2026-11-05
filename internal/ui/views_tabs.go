@@ -26,7 +26,9 @@ func (m Model) renderMirrorTab() string {
 	s.WriteString(StyleHeader.Render("Live Mirror & Desktop Control") + "\n\n")
 	s.WriteString(StyleNormalRow.Render("  [m] Launch Interactive Scrcpy Stream (Low Latency)") + "\n")
 	s.WriteString(StyleNormalRow.Render("  [p] Launch Presentation Mode (Device Screen Off)") + "\n")
+	s.WriteString(StyleNormalRow.Render("  [v] Start Real-Time Screen Recording (MP4 to Desktop)") + "\n")
 	s.WriteString(StyleNormalRow.Render("  [s] Take Instant Screenshot to Desktop") + "\n")
+	s.WriteString(StyleNormalRow.Render("  [c] Push Mac Clipboard to Phone | [y] Pull Phone Clipboard") + "\n")
 	s.WriteString(StyleNormalRow.Render("  [w] Switch from USB to Wireless TCP/IP (Port 5555)") + "\n\n")
 
 	if len(m.Devices) > 0 {
@@ -72,7 +74,7 @@ func (m Model) renderStorageTab() string {
 		s.WriteString(style.Render(line) + "\n")
 	}
 
-	s.WriteString("\n" + StyleHelp.Render("  Use j/k to navigate items. Press [r] to re-scan."))
+	s.WriteString("\n" + StyleHelp.Render("  [j/k] Navigate | [r] Re-scan | [c] Purge Junk App Cache"))
 	return s.String()
 }
 

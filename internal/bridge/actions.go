@@ -58,6 +58,23 @@ func (e *Executor) OpenURL(url string) error {
 	return err
 }
 
+func (e *Executor) InstallAPK(apkPath string) error {
+	_, err := e.RunADBWithTimeout(30*time.Second, "install", "-r", apkPath)
+	return err
+}
+
+func (e *Executor) ReversePort(port string) error {
+	target := fmt.Sprintf("tcp:%s", port)
+	_, err := e.RunADBWithTimeout(4*time.Second, "reverse", target, target)
+	return err
+}
+
+func (e *Executor) RemoveReversePort(port string) error {
+	target := fmt.Sprintf("tcp:%s", port)
+	_, err := e.RunADBWithTimeout(4*time.Second, "reverse", "--remove", target)
+	return err
+}
+
 func (e *Executor) PushText(text string) error {
 	escaped := fmt.Sprintf("\"%s\"", text)
 	_, err := e.RunADBWithTimeout(3*time.Second, "shell", "input", "text", escaped)

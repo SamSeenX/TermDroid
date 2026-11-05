@@ -75,6 +75,16 @@ func LaunchMirrorCmd(exec *bridge.Executor, turnScreenOff bool) tea.Cmd {
 	}
 }
 
+func StartRecordingCmd(exec *bridge.Executor) tea.Cmd {
+	return func() tea.Msg {
+		_, path, err := exec.StartRecordingProcess("")
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Recording failed: %v", err))
+		}
+		return StatusMsg(fmt.Sprintf("Recording to: %s", path))
+	}
+}
+
 func SwitchWifiCmd(exec *bridge.Executor) tea.Cmd {
 	return func() tea.Msg {
 		target, err := exec.SwitchToWireless("5555")
@@ -92,6 +102,36 @@ func PairDeviceCmd(exec *bridge.Executor, ipPort, code string) tea.Cmd {
 			return StatusMsg(fmt.Sprintf("Pairing failed: %v", err))
 		}
 		return PairingSuccessMsg(res)
+	}
+}
+
+func PushClipboardCmd(exec *bridge.Executor) tea.Cmd {
+	return func() tea.Msg {
+		res, err := exec.PushClipboardToDevice()
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Clipboard push error: %v", err))
+		}
+		return StatusMsg(res)
+	}
+}
+
+func PullClipboardCmd(exec *bridge.Executor) tea.Cmd {
+	return func() tea.Msg {
+		res, err := exec.PullClipboardFromDevice()
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Clipboard pull error: %v", err))
+		}
+		return StatusMsg(res)
+	}
+}
+
+func PurgeCacheCmd(exec *bridge.Executor) tea.Cmd {
+	return func() tea.Msg {
+		res, err := storage.PurgeAppCache(exec)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Cache cleanup failed: %v", err))
+		}
+		return StatusMsg(res)
 	}
 }
 
@@ -122,15 +162,5 @@ func DisconnectDeviceCmd(exec *bridge.Executor, target string) tea.Cmd {
 			return StatusMsg(fmt.Sprintf("Disconnect error: %v", err))
 		}
 		return StatusMsg(fmt.Sprintf("Disconnected %s", target))
-	}
-}
-
-func SendKeyCmd(exec *bridge.Executor, key bridge.KeyAction) tea.Cmd {
-	return func() tea.Msg {
-		err := exec.SendKeyEvent(key)
-		if err != nil {
-			return StatusMsg(fmt.Sprintf("Keyevent error: %v", err))
-		}
-		return StatusMsg("Key command sent")
 	}
 }
