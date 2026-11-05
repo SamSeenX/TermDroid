@@ -42,13 +42,10 @@ func ScanStorageTree(exec *bridge.Executor, rootPath string) (*StorageSummary, e
 		}
 	}
 
-	duOut, err := exec.RunADBWithTimeout(12*time.Second, "shell", "du", "-k", "-d", "1", rootPath)
-	if err != nil {
-		duOut, err = exec.RunADBWithTimeout(12*time.Second, "shell", "du", "-k", "--max-depth=1", rootPath)
-	}
-
-	if err != nil {
-		return summary, err
+	duScript := "for d in /sdcard/*; do [ -d \"$d\" ] && [ \"$d\" != \"/sdcard/Android\" ] && du -sk \"$d\" 2>/dev/null; done; true"
+	duOut, err := exec.RunADBWithTimeout(8*time.Second, "shell", duScript)
+	if err != nil || duOut == "" {
+		duOut, _ = exec.RunADBWithTimeout(8*time.Second, "shell", "du -sk /sdcard/DCIM /sdcard/Download /sdcard/Movies /sdcard/Pictures /sdcard/Music /sdcard/Documents 2>/dev/null; true")
 	}
 
 	var items []StorageItem
