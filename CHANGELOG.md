@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.3] - 2026-11-05
+
+### Performance & Latency
+* Reverted dumpsys lockscreen inspection overhead on unlock macro.
+* Restored zero-latency instant unlock sequence with direct wake, swipe, and PIN injection in <200ms without background verification lag.
+
 ## [v0.5.2] - 2026-11-05
 
 ### Added
