@@ -65,13 +65,17 @@ func LaunchMirrorCmd(exec *bridge.Executor, turnScreenOff bool) tea.Cmd {
 			TurnScreenOff: turnScreenOff,
 			StayAwake:     true,
 			AlwaysOnTop:   true,
+			MaxSize:       1200,
+			BitRate:       "6M",
+			MaxFps:        60,
+			VideoCodec:    "h264",
 			WindowTitle:   "TermDroid Desktop Stream",
 		}
 		_, err := exec.StartMirrorProcess(opts)
 		if err != nil {
 			return StatusMsg(fmt.Sprintf("Scrcpy launch failed: %v", err))
 		}
-		return StatusMsg("Mirror streaming window opened")
+		return StatusMsg("Mirror streaming window opened (1200p, 6M, 60fps)")
 	}
 }
 
