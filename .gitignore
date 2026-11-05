@@ -17,3 +17,12 @@ go.work
 # Temp and logs
 *.log
 /tmp/
+
+# Configuration and credentials
+.config/
+config.json
+*.pin
+*.secret
+*.env
+*.key
+credentials.json
