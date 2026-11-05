@@ -85,3 +85,13 @@ func LoadNotificationsCmd(exec *bridge.Executor) tea.Cmd {
 		return NotificationsLoadedMsg(items)
 	}
 }
+
+func PushTextToDeviceCmd(exec *bridge.Executor, text string) tea.Cmd {
+	return func() tea.Msg {
+		err := exec.PushText(text)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Text injection failed: %v", err))
+		}
+		return StatusMsg("Successfully injected text to phone cursor")
+	}
+}
