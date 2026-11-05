@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.6.2] - 2026-11-05
+
+### Added
+* DiskMan File & Folder Deletion via `x` or `delete` key with safety confirmation prompt ([Shift+Y] to delete, [Esc] to cancel).
+* Automatic directory refresh upon deleting an item to immediately update space metrics and file listings.
+
 ## [v0.6.1] - 2026-11-05
 
 ### Fixed

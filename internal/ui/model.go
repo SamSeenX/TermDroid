@@ -65,6 +65,8 @@ type Model struct {
 	TextModalOpen bool
 	TextInput     string
 	IsScanningStorage bool
+	DeleteTarget  string
+	ConfirmDelete bool
 }
 
 func InitialModel() Model {
