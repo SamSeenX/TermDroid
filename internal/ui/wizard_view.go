@@ -27,12 +27,13 @@ func (m Model) renderWizard() string {
 
 	if m.Wizard.Mode == WizardUSB {
 		b.WriteString(m.renderUSBChecklist())
+		b.WriteString("\n" + StyleNormalRow.Render("Status: "+m.Status) + "\n")
+		b.WriteString(StyleHelp.Render("Press [2] or [Tab] Wireless Mode | [r] Force Scan | [q] Exit"))
 	} else {
 		b.WriteString(m.renderWirelessGuide())
+		b.WriteString("\n" + StyleNormalRow.Render("Status: "+m.Status) + "\n")
+		b.WriteString(StyleHelp.Render("[Tab] Switch Field | [Enter] Pair & Connect | [Esc] Back to USB | [Ctrl+C] Exit"))
 	}
-
-	b.WriteString("\n" + StyleNormalRow.Render("Status: "+m.Status) + "\n")
-	b.WriteString(StyleHelp.Render("Press [1] USB Mode | [2] Wireless Mode | [r] Force Scan | [q] Exit"))
 
 	return b.String()
 }
@@ -89,6 +90,5 @@ func (m Model) renderWirelessGuide() string {
 		s.WriteString(StyleErrorBadge.Render("  "+m.Wizard.ErrorMsg) + "\n\n")
 	}
 
-	s.WriteString(StyleHelp.Render("  Type to edit | [Tab] Switch Field | [Backspace] Delete | [Enter] Pair & Connect") + "\n")
 	return s.String()
 }

@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.2.1] - 2026-11-05
+
+### Fixed
+* Isolated keystroke handling between USB Watcher and Wireless text input modes.
+* Prevented digits (such as 1 or 2) and letters from triggering USB mode switches during IP address entry.
+* Assigned Esc key for explicit, unambiguous return to USB mode from Wireless pairing.
+
 ## [v0.2.0] - 2026-11-05
 
 ### Added
