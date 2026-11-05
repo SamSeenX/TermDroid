@@ -71,13 +71,8 @@ func handleUnlockCmd(exec *bridge.Executor, args []string) {
 		fmt.Println("No PIN specified. Performing wake and swipe up gesture...")
 	}
 
-	executed, err := exec.UnlockDevice(pin)
-	if err != nil {
+	if err := exec.UnlockDevice(pin); err != nil {
 		fmt.Printf("Unlock error: %v\n", err)
-		return
-	}
-	if !executed {
-		fmt.Println("Notice: Device is already awake and unlocked. PIN input suppressed for security.")
 		return
 	}
 	fmt.Println("Unlock sequence executed successfully.")

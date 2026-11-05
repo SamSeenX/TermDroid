@@ -103,12 +103,7 @@ func (e *Executor) PushText(text string) error {
 	return err
 }
 
-func (e *Executor) UnlockDevice(pin string) (bool, error) {
-	state := e.CheckLockState()
-	if state.IsAwake && !state.IsLocked {
-		return false, nil
-	}
-
+func (e *Executor) UnlockDevice(pin string) error {
 	e.RunADBWithTimeout(2*time.Second, "shell", "input", "keyevent", "224")
 	time.Sleep(150 * time.Millisecond)
 
@@ -117,11 +112,11 @@ func (e *Executor) UnlockDevice(pin string) (bool, error) {
 
 	if pin != "" {
 		if err := e.PushText(pin); err != nil {
-			return true, err
+			return err
 		}
 		time.Sleep(100 * time.Millisecond)
 		_, err := e.RunADBWithTimeout(2*time.Second, "shell", "input", "keyevent", "66")
-		return true, err
+		return err
 	}
-	return true, nil
+	return nil
 }
