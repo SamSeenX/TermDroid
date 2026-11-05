@@ -43,6 +43,13 @@ func InitialWizardState() WizardState {
 }
 
 func (m Model) handleWizardKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if m.Wizard.Mode == WizardWireless {
+		return m.handleWirelessInputKeys(msg)
+	}
+	return m.handleUSBWatcherKeys(msg)
+}
+
+func (m Model) handleUSBWatcherKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "ctrl+c", "q":
 		return m, tea.Quit
@@ -52,52 +59,54 @@ func (m Model) handleWizardKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.Wizard.ErrorMsg = ""
 		return m, tea.Batch(LoadDevicesCmd(m.Executor), TickCmd())
 
-	case "2", "w":
+	case "2", "w", "tab":
 		m.Wizard.Mode = WizardWireless
 		m.Wizard.ErrorMsg = ""
 		return m, nil
 
-	case "tab", "down":
-		if m.Wizard.Mode == WizardWireless {
-			m.Wizard.ActiveField = (m.Wizard.ActiveField + 1) % 2
-		}
-		return m, nil
+	case "r", "enter":
+		m.Status = "Checking for connected devices..."
+		return m, LoadDevicesCmd(m.Executor)
+	}
 
-	case "shift+tab", "up":
-		if m.Wizard.Mode == WizardWireless {
-			m.Wizard.ActiveField = (m.Wizard.ActiveField + 1) % 2
-		}
+	return m, nil
+}
+
+func (m Model) handleWirelessInputKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "ctrl+c":
+		return m, tea.Quit
+
+	case "esc":
+		m.Wizard.Mode = WizardUSB
+		m.Wizard.ErrorMsg = ""
+		m.Status = "Monitoring for USB cable connection..."
+		return m, tea.Batch(LoadDevicesCmd(m.Executor), TickCmd())
+
+	case "tab", "down", "shift+tab", "up":
+		m.Wizard.ActiveField = (m.Wizard.ActiveField + 1) % 2
 		return m, nil
 
 	case "backspace":
-		if m.Wizard.Mode == WizardWireless {
-			if m.Wizard.ActiveField == 0 && len(m.Wizard.PairIPPort) > 0 {
-				m.Wizard.PairIPPort = m.Wizard.PairIPPort[:len(m.Wizard.PairIPPort)-1]
-			} else if m.Wizard.ActiveField == 1 && len(m.Wizard.PairCode) > 0 {
-				m.Wizard.PairCode = m.Wizard.PairCode[:len(m.Wizard.PairCode)-1]
-			}
+		if m.Wizard.ActiveField == 0 && len(m.Wizard.PairIPPort) > 0 {
+			m.Wizard.PairIPPort = m.Wizard.PairIPPort[:len(m.Wizard.PairIPPort)-1]
+		} else if m.Wizard.ActiveField == 1 && len(m.Wizard.PairCode) > 0 {
+			m.Wizard.PairCode = m.Wizard.PairCode[:len(m.Wizard.PairCode)-1]
 		}
 		return m, nil
 
 	case "enter":
-		if m.Wizard.Mode == WizardWireless {
-			if m.Wizard.PairIPPort == "" || m.Wizard.PairCode == "" {
-				m.Wizard.ErrorMsg = "Both IP:Port and Pairing Code are required"
-				return m, nil
-			}
-			m.Wizard.IsPairing = true
-			m.Wizard.ErrorMsg = ""
-			m.Status = "Initiating wireless pairing handshake..."
-			return m, PairDeviceCmd(m.Executor, m.Wizard.PairIPPort, m.Wizard.PairCode)
+		if m.Wizard.PairIPPort == "" || m.Wizard.PairCode == "" {
+			m.Wizard.ErrorMsg = "Both IP:Port and Pairing Code are required"
+			return m, nil
 		}
-		return m, LoadDevicesCmd(m.Executor)
-
-	case "r":
-		m.Status = "Checking for connected devices..."
-		return m, LoadDevicesCmd(m.Executor)
+		m.Wizard.IsPairing = true
+		m.Wizard.ErrorMsg = ""
+		m.Status = "Initiating wireless pairing handshake..."
+		return m, PairDeviceCmd(m.Executor, m.Wizard.PairIPPort, m.Wizard.PairCode)
 
 	default:
-		if m.Wizard.Mode == WizardWireless && len(msg.Runes) > 0 {
+		if len(msg.Runes) > 0 {
 			char := string(msg.Runes)
 			if m.Wizard.ActiveField == 0 {
 				if len(m.Wizard.PairIPPort) < 26 {
