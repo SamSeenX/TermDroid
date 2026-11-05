@@ -42,16 +42,25 @@ func (m Model) renderHeader() string {
 
 	var vitals string
 	if m.Vitals != nil {
-		charging := "⚡ "
-		if !m.Vitals.BatteryCharging {
-			charging = "🔋 "
+		chargingIcon := "🔋 "
+		chargeStatus := "Discharging"
+		if m.Vitals.BatteryCharging {
+			chargingIcon = "⚡ "
+			chargeStatus = fmt.Sprintf("Charging (%s)", m.Vitals.ChargingSource)
 		}
+
 		battColor := ColorSuccess
-		vitals = fmt.Sprintf("%sBattery: %s (%s)  🌡️ Temp: %s",
-			charging,
+		wifiName := m.Vitals.WifiSSID
+		if wifiName == "" {
+			wifiName = "Disconnected"
+		}
+
+		vitals = fmt.Sprintf("%sBattery: %s [%s]  🌡️ Temp: %s  📶 Wi-Fi: %s",
+			chargingIcon,
 			lipgloss.NewStyle().Bold(true).Foreground(battColor).Render(m.Vitals.BatteryLevel),
-			m.Vitals.BatteryHealth,
+			lipgloss.NewStyle().Bold(true).Foreground(ColorSecondary).Render(chargeStatus),
 			m.Vitals.BatteryTemperature,
+			lipgloss.NewStyle().Bold(true).Foreground(ColorPrimary).Render(wifiName),
 		)
 	} else {
 		vitals = "🔋 Battery: Checking status..."
