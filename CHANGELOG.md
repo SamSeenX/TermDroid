@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.4] - 2026-11-05
+
+### Security & Safety
+* Added Guarded Unlock Protection querying `dumpsys power` and `dumpsys window` before injecting credentials.
+* Suppressed PIN injection when the device is already awake and unlocked, preventing accidental credential leakage into open search bars or text fields.
+
 ## [v0.4.3] - 2026-11-05
 
 ### Added
