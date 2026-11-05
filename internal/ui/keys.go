@@ -54,8 +54,8 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if m.ActiveTab == TabStorage {
 			m.IsScanningStorage = true
 			m.IsLoading = true
-			m.Status = "Triggering fresh storage analysis..."
-			return m, LoadStorageCmd(m.Executor)
+			m.Status = fmt.Sprintf("Triggering fresh scan of %s...", m.StoragePath)
+			return m, LoadStorageCmd(m.Executor, m.StoragePath)
 		}
 		m.IsLoading = true
 		return m, m.onTabChanged()
@@ -152,17 +152,14 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleDownKey()
 
 	case "enter":
-		if m.ActiveTab == TabActions {
-			return m.handleKeypadEnter()
-		}
-		return m, nil
+		return m.handleEnterKey()
+
+	case "backspace", "esc":
+		return m.handleBackNavKey()
 
 	default:
 		if m.ActiveTab == TabActions {
-			if act, ok := findActionByShortcut(keyStr); ok {
-				m.Status = fmt.Sprintf("Shortcut fired: %s...", act.Name)
-				return m, ExecuteKeypadCmd(m.Executor, act)
-			}
+			return m.handleActionShortcut(keyStr)
 		}
 	}
 

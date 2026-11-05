@@ -2,6 +2,14 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.6.0] - 2026-11-05
+
+### Added
+* DiskMan Subfolder Deep Navigation allowing you to hit [Enter] on any folder to dive into its subfolder size breakdown.
+* Breadcrumb path tracking and hierarchical navigation history stack.
+* Instant upward navigation via [Esc] or [Backspace] returning directly to parent folders.
+* Scrcpy Viewer Window Shortcut Cheatsheet embedded directly on Tab 1 for quick reference (Opt+h Home, Opt+b Back, Opt+s Apps, Opt+↑/↓ Volume, Opt+p Power).
+
 ## [v0.5.6] - 2026-11-05
 
 ### Performance & UX

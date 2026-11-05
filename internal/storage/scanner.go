@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,7 +29,7 @@ func ScanStorageTree(exec *bridge.Executor, rootPath string) (*StorageSummary, e
 		Percent:    "0%",
 	}
 
-	dfOut, err := exec.RunADBWithTimeout(4*time.Second, "shell", "df", "-h", rootPath)
+	dfOut, err := exec.RunADBWithTimeout(4*time.Second, "shell", "df", "-h", "/sdcard")
 	if err == nil {
 		lines := strings.Split(dfOut, "\n")
 		if len(lines) >= 2 {
@@ -42,10 +43,11 @@ func ScanStorageTree(exec *bridge.Executor, rootPath string) (*StorageSummary, e
 		}
 	}
 
-	duScript := "for d in /sdcard/*; do [ -d \"$d\" ] && [ \"$d\" != \"/sdcard/Android\" ] && du -sk \"$d\" 2>/dev/null; done; true"
+	cleanedRoot := strings.TrimSuffix(rootPath, "/")
+	duScript := fmt.Sprintf("for d in %s/*; do [ -e \"$d\" ] && [ \"$d\" != \"/sdcard/Android\" ] && du -sk \"$d\" 2>/dev/null; done; true", cleanedRoot)
 	duOut, err := exec.RunADBWithTimeout(8*time.Second, "shell", duScript)
 	if err != nil || duOut == "" {
-		duOut, _ = exec.RunADBWithTimeout(8*time.Second, "shell", "du -sk /sdcard/DCIM /sdcard/Download /sdcard/Movies /sdcard/Pictures /sdcard/Music /sdcard/Documents 2>/dev/null; true")
+		duOut, _ = exec.RunADBWithTimeout(8*time.Second, "shell", fmt.Sprintf("du -sk %s/* 2>/dev/null; true", cleanedRoot))
 	}
 
 	var items []StorageItem

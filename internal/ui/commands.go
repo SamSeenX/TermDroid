@@ -29,9 +29,12 @@ func LoadVitalsCmd(exec *bridge.Executor) tea.Cmd {
 	}
 }
 
-func LoadStorageCmd(exec *bridge.Executor) tea.Cmd {
+func LoadStorageCmd(exec *bridge.Executor, path string) tea.Cmd {
 	return func() tea.Msg {
-		s, err := storage.ScanStorageTree(exec, "/sdcard")
+		if path == "" {
+			path = "/sdcard"
+		}
+		s, err := storage.ScanStorageTree(exec, path)
 		if err != nil {
 			return StatusMsg(fmt.Sprintf("Storage scan error: %v", err))
 		}
