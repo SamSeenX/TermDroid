@@ -97,12 +97,6 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, PurgeCacheCmd(m.Executor)
 		}
 
-	case "y":
-		if m.ActiveTab == TabMirror {
-			m.Status = "Pulling phone clipboard to Mac..."
-			return m, PullClipboardCmd(m.Executor)
-		}
-
 	case "s":
 		if m.ActiveTab == TabMirror {
 			m.Status = "Capturing screen frame..."
@@ -141,9 +135,13 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, UnlockDeviceCmd(m.Executor, "")
 		}
 
-	case "Y":
+	case "y", "Y":
 		if m.ConfirmDelete {
 			return m.handleConfirmDelete()
+		}
+		if m.ActiveTab == TabMirror {
+			m.Status = "Pulling phone clipboard to Mac..."
+			return m, PullClipboardCmd(m.Executor)
 		}
 
 	case "left":

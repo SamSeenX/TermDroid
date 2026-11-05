@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"termdroid/internal/storage"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -58,7 +59,7 @@ func (m Model) handleDeleteKey() (tea.Model, tea.Cmd) {
 		selected := m.Storage.Items[m.StorageCursor]
 		m.DeleteTarget = selected.Path
 		m.ConfirmDelete = true
-		m.Status = fmt.Sprintf("Delete %s? Press [Y] to confirm, [Esc] to cancel", selected.Path)
+		m.Status = fmt.Sprintf("Delete %s? Press [y] to confirm, [Esc] to cancel", selected.Path)
 	}
 	return m, nil
 }
@@ -68,16 +69,21 @@ func (m Model) handleConfirmDelete() (tea.Model, tea.Cmd) {
 		target := m.DeleteTarget
 		m.ConfirmDelete = false
 		m.DeleteTarget = ""
-		parentPath := m.StoragePath
-		if parentPath == "" {
-			parentPath = "/sdcard"
+
+		var remaining []storage.StorageItem
+		for _, it := range m.Storage.Items {
+			if it.Path != target {
+				remaining = append(remaining, it)
+			}
 		}
-		m.Storage = nil
-		m.StorageCursor = 0
-		m.IsLoading = true
-		m.IsScanningStorage = true
+		m.Storage.Items = remaining
+
+		if m.StorageCursor >= len(remaining) && len(remaining) > 0 {
+			m.StorageCursor = len(remaining) - 1
+		}
+
 		m.Status = fmt.Sprintf("Deleting %s from device...", target)
-		return m, DeleteStorageItemCmd(m.Executor, target, parentPath)
+		return m, DeleteStorageItemCmd(m.Executor, target)
 	}
 	return m, nil
 }

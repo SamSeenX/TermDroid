@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.6.4] - 2026-11-05
+
+### UX & Performance
+* Optimistic in-memory deletion in DiskMan: immediately removes deleted items from the local cache and maintains cursor position without re-triggering slow storage re-scans.
+* Simplified delete confirmation hotkey to simple `y` (no Shift modifier needed) with `Esc` to cancel.
+* Full storage re-scans remain available strictly on-demand by pressing `r`.
+
 ## [v0.6.3] - 2026-11-05
 
 ### Fixed
