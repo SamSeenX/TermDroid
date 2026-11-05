@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.6] - 2026-11-05
+
+### Added
+* Charging source telemetry in HUD header detecting AC Fast, USB, and Wireless charging states.
+* Connected Wi-Fi network SSID detection (`cmd wifi status`) displayed prominently in the telemetry HUD.
+
 ## [v0.4.5] - 2026-11-05
 
 ### UI & Styling
