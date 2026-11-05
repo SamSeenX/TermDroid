@@ -2,6 +2,17 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.2.2] - 2026-11-05
+
+### Added
+* Automatic transition directly to dashboard if an authorized device is already connected on startup.
+* Real-time authorization monitor detecting devices in unauthorized state with on-screen prompt to tap Allow.
+* Chained automatic device discovery immediately upon successful wireless pairing.
+* Support for mDNS wireless connection identifiers (`._adb-tls-connect._tcp`).
+
+### Refactored
+* Extracted keypress management into `internal/ui/keys.go` adhering to the proactive 180-line modular rule.
+
 ## [v0.2.1] - 2026-11-05
 
 ### Fixed

@@ -91,7 +91,7 @@ func PairDeviceCmd(exec *bridge.Executor, ipPort, code string) tea.Cmd {
 		if err != nil {
 			return StatusMsg(fmt.Sprintf("Pairing failed: %v", err))
 		}
-		return StatusMsg(res)
+		return PairingSuccessMsg(res)
 	}
 }
 

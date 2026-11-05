@@ -37,19 +37,22 @@ func (e *Executor) ListDevices() ([]DeviceInfo, error) {
 
 		devID := fields[0]
 		state := fields[1]
-		if state != "device" {
+
+		if state != "device" && state != "unauthorized" {
 			continue
+		}
+
+		isWireless := strings.Contains(devID, ":") || strings.Contains(devID, "_adb-tls-connect")
+		ipAddr := ""
+		if strings.Contains(devID, ":") {
+			ipAddr = strings.Split(devID, ":")[0]
 		}
 
 		dev := DeviceInfo{
 			ID:         devID,
 			State:      state,
-			IsWireless: strings.Contains(devID, ":"),
-		}
-
-		if dev.IsWireless {
-			parts := strings.Split(devID, ":")
-			dev.IPAddress = parts[0]
+			IsWireless: isWireless,
+			IPAddress:  ipAddr,
 		}
 
 		for _, field := range fields[2:] {
