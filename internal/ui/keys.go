@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"termdroid/internal/bridge"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -10,6 +9,10 @@ import (
 func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if len(m.Devices) == 0 {
 		return m.handleWizardKeys(msg)
+	}
+
+	if m.PinModalOpen {
+		return m.handlePinModalKeys(msg)
 	}
 
 	keyStr := msg.String()
@@ -86,6 +89,28 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.Status = "Negotiating wireless TCP/IP bridge..."
 		return m, SwitchWifiCmd(m.Executor)
 
+	case "l":
+		if m.SavedPIN != "" {
+			m.Status = "Waking and unlocking device with saved PIN..."
+			return m, UnlockDeviceCmd(m.Executor, m.SavedPIN)
+		}
+		m.PinModalOpen = true
+		m.PinInput = ""
+		m.Status = "No PIN saved. Enter PIN to enable 1-tap unlock..."
+		return m, nil
+
+	case "L":
+		m.PinModalOpen = true
+		m.PinInput = ""
+		m.Status = "Updating saved unlock PIN..."
+		return m, nil
+
+	case "k":
+		if m.ActiveTab == TabMirror {
+			m.Status = "Injecting wake and swipe unlock gesture..."
+			return m, UnlockDeviceCmd(m.Executor, "")
+		}
+
 	case "left":
 		if m.ActiveTab == TabActions && m.KeypadCol > 0 {
 			m.KeypadCol--
@@ -120,54 +145,4 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
-}
-
-func (m Model) handleUpKey() (tea.Model, tea.Cmd) {
-	if m.ActiveTab == TabStorage && m.StorageCursor > 0 {
-		m.StorageCursor--
-	} else if m.ActiveTab == TabProcesses && m.ProcessCursor > 0 {
-		m.ProcessCursor--
-	} else if m.ActiveTab == TabActions && m.KeypadRow > 0 {
-		m.KeypadRow--
-	}
-	return m, nil
-}
-
-func (m Model) handleDownKey() (tea.Model, tea.Cmd) {
-	if m.ActiveTab == TabStorage && m.Storage != nil && m.StorageCursor < len(m.Storage.Items)-1 {
-		m.StorageCursor++
-	} else if m.ActiveTab == TabProcesses && m.ProcessCursor < len(m.Processes)-1 {
-		m.ProcessCursor++
-	} else if m.ActiveTab == TabActions {
-		cols := bridge.GetKeypadColumns()
-		if m.KeypadRow < len(cols[m.KeypadCol])-1 {
-			m.KeypadRow++
-		}
-	}
-	return m, nil
-}
-
-func (m *Model) onTabChanged() tea.Cmd {
-	if len(m.Devices) == 0 {
-		return LoadDevicesCmd(m.Executor)
-	}
-
-	switch m.ActiveTab {
-	case TabMirror:
-		return LoadVitalsCmd(m.Executor)
-	case TabStorage:
-		if m.Storage == nil {
-			m.IsLoading = true
-			return LoadStorageCmd(m.Executor)
-		}
-	case TabProcesses:
-		m.IsLoading = true
-		return LoadProcessesCmd(m.Executor)
-	case TabLogcat:
-		m.IsLoading = true
-		return LoadLogcatCmd(m.Executor)
-	case TabActions:
-		return nil
-	}
-	return nil
 }

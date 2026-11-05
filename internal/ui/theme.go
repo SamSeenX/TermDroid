@@ -52,4 +52,9 @@ var (
 
 	StyleHelp = lipgloss.NewStyle().
 			Foreground(ColorMuted)
+
+	StyleModal = lipgloss.NewStyle().
+			Border(lipgloss.DoubleBorder()).
+			BorderForeground(ColorPrimary).
+			Padding(1, 2)
 )

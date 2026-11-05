@@ -50,3 +50,16 @@ func (m Model) handleKeypadEnter() (tea.Model, tea.Cmd) {
 	}
 	return m, nil
 }
+
+func UnlockDeviceCmd(exec *bridge.Executor, pin string) tea.Cmd {
+	return func() tea.Msg {
+		err := exec.UnlockDevice(pin)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Unlock failed: %v", err))
+		}
+		if pin == "" {
+			return StatusMsg("Dispatched wake and swipe unlock gesture")
+		}
+		return StatusMsg("Dispatched wake, swipe, and PIN unlock sequence")
+	}
+}

@@ -48,7 +48,7 @@ func (m Model) renderKeypadScreen() string {
 
 	grid := lipgloss.JoinHorizontal(lipgloss.Top, renderedCols[0], "  ", renderedCols[1], "  ", renderedCols[2])
 	s.WriteString(grid)
-	s.WriteString("\n\n" + StyleHelp.Render("Arrows: Grid Nav | Enter: Fire | Hotkeys: [h] Home [b] Back [e] Apps [o] Power [+] Vol+ [-] Vol- [c] Call+ [v] Call- [Space] Play"))
+	s.WriteString("\n\n" + StyleHelp.Render("Arrows: Nav | Enter: Fire | [l] 1-Tap Unlock | [k] Swipe Up | [u] Mute | [h] Home [b] Back [e] Apps [Space] Play"))
 
 	return s.String()
 }
