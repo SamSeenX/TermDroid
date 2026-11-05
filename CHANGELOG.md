@@ -2,6 +2,17 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.3.1] - 2026-11-05
+
+### Added
+* Compact 3-Column side-by-side grid layout for Tab 5 fitting all 33 simulation buttons on one page without scrolling.
+* Discrete Call Volume (+/-) stream controls targeting Stream 0 with on-screen visual slider feedback.
+* Discrete Media Volume (+/-) and Ringtone (+/-) stream controls targeting Streams 3 and 2.
+* Quick 1-touch hotkeys for frequent actions (h, b, e, o, +, -, c, v, u, Space, n, p, j, g, s) while using arrow keys for full grid navigation.
+
+### Refactored
+* Extracted keypad action dispatcher into `internal/ui/keypad_actions.go` keeping all files under 150 lines.
+
 ## [v0.3.0] - 2026-11-05
 
 ### Added
