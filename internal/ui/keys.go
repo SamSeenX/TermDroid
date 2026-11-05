@@ -51,6 +51,12 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, TickCmd()
 
 	case "r":
+		if m.ActiveTab == TabStorage {
+			m.IsScanningStorage = true
+			m.IsLoading = true
+			m.Status = "Triggering fresh storage analysis..."
+			return m, LoadStorageCmd(m.Executor)
+		}
 		m.IsLoading = true
 		return m, m.onTabChanged()
 

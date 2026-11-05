@@ -41,8 +41,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case StorageLoadedMsg:
 		m.Storage = msg
-		m.IsLoading = false
-		m.Status = fmt.Sprintf("Storage: %s used of %s", m.Storage.UsedSpace, m.Storage.TotalSpace)
+		m.IsScanningStorage = false
+		if m.ActiveTab == TabStorage {
+			m.IsLoading = false
+		}
+		if m.Storage != nil {
+			m.Status = fmt.Sprintf("Storage: %s used of %s", m.Storage.UsedSpace, m.Storage.TotalSpace)
+		}
 		return m, nil
 
 	case ProcessesLoadedMsg:
