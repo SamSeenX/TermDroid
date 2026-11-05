@@ -32,6 +32,7 @@ func printHelp() {
 	fmt.Println("  termdroid screenshot      Capture current screen frame to desktop")
 	fmt.Println("  termdroid tap <x> <y>     Inject headless touch tap at coordinates")
 	fmt.Println("  termdroid swipe x1 y1 x2 y2 Inject headless touch swipe gesture")
+	fmt.Println("  termdroid audio           Stream mobile audio to Mac speakers (Opus low-latency)")
 	fmt.Println("  termdroid unlock [PIN]    1-tap unlock macro (wake, swipe, inject PIN)")
 	fmt.Println("  termdroid clipboard       Push or pull clipboard (push/pull)")
 	fmt.Println("  termdroid install <apk>   Sideload APK package onto device")

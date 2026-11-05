@@ -16,6 +16,7 @@ const (
 	TabProcesses
 	TabLogcat
 	TabActions
+	TabNotifications
 )
 
 var TabNames = []string{
@@ -24,6 +25,7 @@ var TabNames = []string{
 	"3. Processes",
 	"4. Logcat",
 	"5. Hardware Keypad & Control",
+	"6. Notifications Stream",
 }
 
 type DevicesLoadedMsg []bridge.DeviceInfo
@@ -31,6 +33,7 @@ type VitalsLoadedMsg *diagnostics.DeviceVitals
 type StorageLoadedMsg *storage.StorageSummary
 type ProcessesLoadedMsg []diagnostics.ProcessItem
 type LogcatLoadedMsg []string
+type NotificationsLoadedMsg []diagnostics.NotificationItem
 type StatusMsg string
 type PairingSuccessMsg string
 
@@ -43,8 +46,10 @@ type Model struct {
 	Storage       *storage.StorageSummary
 	Processes     []diagnostics.ProcessItem
 	LogLines      []string
+	Notifications []diagnostics.NotificationItem
 	StorageCursor int
 	ProcessCursor int
+	NotifCursor   int
 	KeypadCol     int
 	KeypadRow     int
 	Status        string

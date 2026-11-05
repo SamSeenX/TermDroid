@@ -44,6 +44,17 @@ func handleSwipeCmd(exec *bridge.Executor, args []string) {
 	fmt.Printf("Injected swipe from (%d, %d) to (%d, %d) in %dms\n", x1, y1, x2, y2, duration)
 }
 
+func handleAudioCmd(exec *bridge.Executor) {
+	fmt.Println("Launching headless mobile audio stream to Mac speakers (Opus, low-latency)...")
+	cmd, err := exec.StartAudioStreamProcess()
+	if err != nil {
+		fmt.Printf("Audio launch error: %v\n", err)
+		return
+	}
+	fmt.Println("Audio forwarder active. Press Ctrl+C to disconnect audio stream.")
+	cmd.Wait()
+}
+
 func handleUnlockCmd(exec *bridge.Executor, args []string) {
 	pin := ""
 	if len(args) > 0 {

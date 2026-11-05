@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"termdroid/internal/bridge"
+	"termdroid/internal/diagnostics"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -64,5 +65,26 @@ func UnlockDeviceCmd(exec *bridge.Executor, pin string) tea.Cmd {
 			return StatusMsg("Dispatched wake and swipe unlock gesture")
 		}
 		return StatusMsg("Dispatched wake, swipe, and PIN unlock sequence")
+	}
+}
+
+func LaunchAudioStreamCmd(exec *bridge.Executor) tea.Cmd {
+	return func() tea.Msg {
+		cmd, err := exec.StartAudioStreamProcess()
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Audio forwarder failed: %v", err))
+		}
+		go cmd.Wait()
+		return StatusMsg("Forwarding phone audio to Mac via Opus stream...")
+	}
+}
+
+func LoadNotificationsCmd(exec *bridge.Executor) tea.Cmd {
+	return func() tea.Msg {
+		items, err := diagnostics.FetchNotifications(exec)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Notification error: %v", err))
+		}
+		return NotificationsLoadedMsg(items)
 	}
 }

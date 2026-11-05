@@ -22,14 +22,14 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 
 	case "tab":
-		m.ActiveTab = (m.ActiveTab + 1) % 5
+		m.ActiveTab = (m.ActiveTab + 1) % 6
 		return m, m.onTabChanged()
 
 	case "shift+tab":
-		m.ActiveTab = (m.ActiveTab + 4) % 5
+		m.ActiveTab = (m.ActiveTab + 5) % 6
 		return m, m.onTabChanged()
 
-	case "1", "2", "3", "4", "5":
+	case "1", "2", "3", "4", "5", "6":
 		idx := int(msg.Runes[0] - '1')
 		m.ActiveTab = Tab(idx)
 		return m, m.onTabChanged()
@@ -62,6 +62,12 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if m.ActiveTab == TabMirror {
 			m.Status = "Initiating live screen recording..."
 			return m, StartRecordingCmd(m.Executor)
+		}
+
+	case "o":
+		if m.ActiveTab == TabMirror {
+			m.Status = "Launching mobile audio forwarder (Phone ➔ Mac)..."
+			return m, LaunchAudioStreamCmd(m.Executor)
 		}
 
 	case "c":

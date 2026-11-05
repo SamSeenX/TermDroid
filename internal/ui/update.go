@@ -57,6 +57,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Status = fmt.Sprintf("Retrieved %d recent log lines", len(m.LogLines))
 		return m, nil
 
+	case NotificationsLoadedMsg:
+		m.Notifications = msg
+		m.IsLoading = false
+		m.Status = fmt.Sprintf("Retrieved %d active notifications", len(m.Notifications))
+		return m, nil
+
 	case tea.KeyMsg:
 		return m.handleKeyPress(msg)
 	}

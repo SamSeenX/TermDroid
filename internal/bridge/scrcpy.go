@@ -19,12 +19,18 @@ type MirrorOptions struct {
 	VideoCodec    string
 	AlwaysOnTop   bool
 	WindowTitle   string
+	AudioOnly     bool
 }
 
 func (e *Executor) BuildScrcpyArgs(opts MirrorOptions) []string {
 	var args []string
 	if e.DeviceID != "" {
 		args = append(args, "-s", e.DeviceID)
+	}
+
+	if opts.AudioOnly {
+		args = append(args, "--no-video", "--audio-codec=opus", "--audio-buffer=40")
+		return args
 	}
 
 	if opts.TurnScreenOff {
@@ -109,4 +115,12 @@ func (e *Executor) StartRecordingProcess(destPath string) (*exec.Cmd, string, er
 	}
 
 	return cmd, destPath, nil
+}
+
+func (e *Executor) StartAudioStreamProcess() (*exec.Cmd, error) {
+	opts := MirrorOptions{
+		AudioOnly:   true,
+		WindowTitle: "TermDroid Mobile Audio Forwarder",
+	}
+	return e.StartMirrorProcess(opts)
 }
