@@ -2,6 +2,11 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.4] - 2026-11-05
+
+### Added
+* Interactive Text Injection Modal triggered via `t` hotkey, allowing you to paste or type any string on Mac and inject it directly into the focused cursor on Android (`adb shell input text`).
+
 ## [v0.5.3] - 2026-11-05
 
 ### Performance & Latency

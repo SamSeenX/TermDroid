@@ -16,6 +16,10 @@ func (m Model) View() string {
 		return m.renderPinModal()
 	}
 
+	if m.TextModalOpen {
+		return m.renderTextModal()
+	}
+
 	var b strings.Builder
 
 	b.WriteString(m.renderHeader())

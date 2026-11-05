@@ -60,6 +60,8 @@ type Model struct {
 	PinModalOpen  bool
 	PinInput      string
 	SavedPIN      string
+	TextModalOpen bool
+	TextInput     string
 }
 
 func InitialModel() Model {

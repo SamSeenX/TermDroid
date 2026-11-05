@@ -15,6 +15,10 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handlePinModalKeys(msg)
 	}
 
+	if m.TextModalOpen {
+		return m.handleTextModalKeys(msg)
+	}
+
 	keyStr := msg.String()
 
 	switch keyStr {
@@ -94,6 +98,12 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "w":
 		m.Status = "Negotiating wireless TCP/IP bridge..."
 		return m, SwitchWifiCmd(m.Executor)
+
+	case "t":
+		m.TextModalOpen = true
+		m.TextInput = ""
+		m.Status = "Opening Text Injection prompt..."
+		return m, nil
 
 	case "l":
 		if m.SavedPIN != "" {
