@@ -42,7 +42,15 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleDeviceCycle()
 
 	case "x":
+		if m.ActiveTab == TabStorage {
+			return m.handleDeleteKey()
+		}
 		return m.handleDeviceDisconnect()
+
+	case "delete":
+		if m.ActiveTab == TabStorage {
+			return m.handleDeleteKey()
+		}
 
 	case "a":
 		m.Devices = nil
@@ -131,6 +139,11 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if m.ActiveTab == TabMirror {
 			m.Status = "Injecting wake and swipe unlock gesture..."
 			return m, UnlockDeviceCmd(m.Executor, "")
+		}
+
+	case "Y":
+		if m.ConfirmDelete {
+			return m.handleConfirmDelete()
 		}
 
 	case "left":

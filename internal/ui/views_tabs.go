@@ -104,11 +104,16 @@ func (m Model) renderStorageTab() string {
 		s.WriteString(style.Render(line) + "\n")
 	}
 
-	navHint := "▲/▼: Select | [Enter]: Open Folder | [Esc/Backspace]: Go Up | [r]: Re-scan | [c]: Purge Cache"
+	navHint := "▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Go Up | [x]: Delete | [c]: Purge Cache"
 	if len(m.StorageStack) > 0 {
-		navHint = fmt.Sprintf("▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Back to %s | [r]: Re-scan", m.StorageStack[len(m.StorageStack)-1])
+		navHint = fmt.Sprintf("▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Back | [x]: Delete | [r]: Re-scan")
 	}
-	s.WriteString("\n" + StyleHelp.Render("  "+navHint))
+	if m.ConfirmDelete {
+		navHint = fmt.Sprintf("CONFIRM DELETION of %s? Press [Shift+Y] to delete permanently, [Esc] to cancel", m.DeleteTarget)
+		s.WriteString("\n" + StyleErrorBadge.Render("  "+navHint))
+	} else {
+		s.WriteString("\n" + StyleHelp.Render("  "+navHint))
+	}
 	return s.String()
 }
 
