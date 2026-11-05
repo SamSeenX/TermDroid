@@ -2,7 +2,10 @@ package bridge
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"time"
 )
 
 type MirrorOptions struct {
@@ -61,4 +64,25 @@ func (e *Executor) StartMirrorProcess(opts MirrorOptions) (*exec.Cmd, error) {
 		return nil, err
 	}
 	return cmd, nil
+}
+
+func (e *Executor) StartRecordingProcess(destPath string) (*exec.Cmd, string, error) {
+	if destPath == "" {
+		home, _ := os.UserHomeDir()
+		timestamp := time.Now().Format("20060102-150405")
+		destPath = filepath.Join(home, "Desktop", fmt.Sprintf("termdroid-recording-%s.mp4", timestamp))
+	}
+
+	opts := MirrorOptions{
+		StayAwake:   true,
+		RecordPath:  destPath,
+		WindowTitle: "TermDroid Recording Active",
+	}
+
+	cmd, err := e.StartMirrorProcess(opts)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return cmd, destPath, nil
 }

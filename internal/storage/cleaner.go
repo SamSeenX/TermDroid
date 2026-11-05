@@ -66,6 +66,14 @@ func FindLargeFiles(exec *bridge.Executor, minSizeMB int) ([]StorageItem, error)
 	return items, nil
 }
 
+func PurgeAppCache(exec *bridge.Executor) (string, error) {
+	_, err := exec.RunADBWithTimeout(10*time.Second, "shell", "rm", "-rf", "/sdcard/Android/data/*/cache/*", "/sdcard/Android/data/*/code_cache/*")
+	if err != nil {
+		return "", fmt.Errorf("cache purge error: %w", err)
+	}
+	return "Cleaned application cache directories in /sdcard/Android/data", nil
+}
+
 func DeleteDevicePath(exec *bridge.Executor, targetPath string) error {
 	_, err := exec.RunADBWithTimeout(8*time.Second, "shell", "rm", "-rf", targetPath)
 	return err
