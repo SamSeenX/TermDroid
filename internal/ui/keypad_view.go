@@ -4,40 +4,51 @@ import (
 	"fmt"
 	"strings"
 	"termdroid/internal/bridge"
+
+	"github.com/charmbracelet/lipgloss"
 )
+
+var colHeaders = []string{
+	"Navigation & OS Panels",
+	"Volume, Calls & Media",
+	"D-Pad Remote & Text",
+}
 
 func (m Model) renderKeypadScreen() string {
 	var s strings.Builder
-	s.WriteString(StyleHeader.Render("Hardware Keypad & System Simulation Deck") + "\n\n")
+	s.WriteString(StyleHeader.Render("Hardware Keypad & Control Deck") + "\n\n")
 
-	actions := bridge.GetAllKeyActions()
-	if len(actions) == 0 {
-		return "  No actions defined.\n"
+	cols := bridge.GetKeypadColumns()
+	var renderedCols []string
+
+	for colIdx, col := range cols {
+		var colBuf strings.Builder
+		header := StyleCard.Render(colHeaders[colIdx])
+		colBuf.WriteString(header + "\n")
+
+		for rowIdx, act := range col {
+			cursor := "  "
+			style := StyleNormalRow
+			if colIdx == m.KeypadCol && rowIdx == m.KeypadRow {
+				cursor = "> "
+				style = StyleSelectedRow
+			}
+
+			tag := act.Shortcut
+			if tag == "" {
+				tag = act.Code
+			}
+
+			line := fmt.Sprintf("%s%-18s [%-5s]", cursor, act.Name, tag)
+			colBuf.WriteString(style.Render(line) + "\n")
+		}
+
+		renderedCols = append(renderedCols, colBuf.String())
 	}
 
-	currentCategory := ""
-	for i, act := range actions {
-		if act.Category != currentCategory {
-			currentCategory = act.Category
-			s.WriteString("\n" + StyleHeader.Render("  "+currentCategory) + "\n")
-		}
+	grid := lipgloss.JoinHorizontal(lipgloss.Top, renderedCols[0], "  ", renderedCols[1], "  ", renderedCols[2])
+	s.WriteString(grid)
+	s.WriteString("\n\n" + StyleHelp.Render("Arrows: Grid Nav | Enter: Fire | Hotkeys: [h] Home [b] Back [e] Apps [o] Power [+] Vol+ [-] Vol- [c] Call+ [v] Call- [Space] Play"))
 
-		cursor := "    "
-		style := StyleNormalRow
-		if i == m.KeypadCursor {
-			cursor = "  > "
-			style = StyleSelectedRow
-		}
-
-		codeBadge := act.Code
-		if act.IsShell {
-			codeBadge = "shell"
-		}
-
-		line := fmt.Sprintf("%s%-30s  [%-5s]", cursor, act.Name, codeBadge)
-		s.WriteString(style.Render(line) + "\n")
-	}
-
-	s.WriteString("\n" + StyleHelp.Render("  [j/k or Up/Down] Select Action | [Enter] Fire Button | [d] Cycle Device | [x] Disconnect | [a] Add Device"))
 	return s.String()
 }

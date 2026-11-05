@@ -45,7 +45,8 @@ type Model struct {
 	LogLines      []string
 	StorageCursor int
 	ProcessCursor int
-	KeypadCursor  int
+	KeypadCol     int
+	KeypadRow     int
 	Status        string
 	Width         int
 	Height        int
@@ -61,7 +62,8 @@ func InitialModel() Model {
 		Status:        "Checking for connected Android devices...",
 		StorageCursor: 0,
 		ProcessCursor: 0,
-		KeypadCursor:  0,
+		KeypadCol:     0,
+		KeypadRow:     0,
 		IsLoading:     false,
 		Wizard:        InitialWizardState(),
 	}

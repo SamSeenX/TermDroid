@@ -12,7 +12,9 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleWizardKeys(msg)
 	}
 
-	switch msg.String() {
+	keyStr := msg.String()
+
+	switch keyStr {
 	case "ctrl+c", "q":
 		return m, tea.Quit
 
@@ -30,25 +32,10 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, m.onTabChanged()
 
 	case "d":
-		if len(m.Devices) > 1 {
-			m.ActiveDevice = (m.ActiveDevice + 1) % len(m.Devices)
-			m.Executor.DeviceID = m.Devices[m.ActiveDevice].ID
-			m.Status = fmt.Sprintf("Switched focus to %s (%s)", m.Devices[m.ActiveDevice].Model, m.Devices[m.ActiveDevice].ID)
-			return m, LoadVitalsCmd(m.Executor)
-		}
-		m.Status = fmt.Sprintf("Current device: %s (No other devices detected)", m.Devices[0].Model)
-		return m, nil
+		return m.handleDeviceCycle()
 
 	case "x":
-		if len(m.Devices) > 0 {
-			dev := m.Devices[m.ActiveDevice]
-			if dev.IsWireless {
-				m.Status = fmt.Sprintf("Disconnecting %s...", dev.ID)
-				return m, DisconnectDeviceCmd(m.Executor, dev.ID)
-			}
-			m.Status = "USB devices cannot be disconnected via software. Unplug cable."
-			return m, nil
-		}
+		return m.handleDeviceDisconnect()
 
 	case "a":
 		m.Devices = nil
@@ -68,30 +55,41 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.Status = "Launching Scrcpy in Presentation Mode..."
 		return m, LaunchMirrorCmd(m.Executor, true)
 
-	case "s":
-		m.Status = "Capturing screen frame..."
-		return m, TakeScreenshotCmd(m.Executor)
-
 	case "w":
 		m.Status = "Negotiating wireless TCP/IP bridge..."
 		return m, SwitchWifiCmd(m.Executor)
 
-	case "up", "k":
+	case "left":
+		if m.ActiveTab == TabActions && m.KeypadCol > 0 {
+			m.KeypadCol--
+		}
+		return m, nil
+
+	case "right":
+		if m.ActiveTab == TabActions && m.KeypadCol < 2 {
+			m.KeypadCol++
+		}
+		return m, nil
+
+	case "up":
 		return m.handleUpKey()
 
-	case "down", "j":
+	case "down":
 		return m.handleDownKey()
 
 	case "enter":
 		if m.ActiveTab == TabActions {
-			actions := bridge.GetAllKeyActions()
-			if m.KeypadCursor >= 0 && m.KeypadCursor < len(actions) {
-				act := actions[m.KeypadCursor]
-				m.Status = fmt.Sprintf("Triggering %s...", act.Name)
+			return m.handleKeypadEnter()
+		}
+		return m, nil
+
+	default:
+		if m.ActiveTab == TabActions {
+			if act, ok := findActionByShortcut(keyStr); ok {
+				m.Status = fmt.Sprintf("Shortcut fired: %s...", act.Name)
 				return m, ExecuteKeypadCmd(m.Executor, act)
 			}
 		}
-		return m, nil
 	}
 
 	return m, nil
@@ -102,13 +100,8 @@ func (m Model) handleUpKey() (tea.Model, tea.Cmd) {
 		m.StorageCursor--
 	} else if m.ActiveTab == TabProcesses && m.ProcessCursor > 0 {
 		m.ProcessCursor--
-	} else if m.ActiveTab == TabActions {
-		actions := bridge.GetAllKeyActions()
-		if m.KeypadCursor > 0 {
-			m.KeypadCursor--
-		} else {
-			m.KeypadCursor = len(actions) - 1
-		}
+	} else if m.ActiveTab == TabActions && m.KeypadRow > 0 {
+		m.KeypadRow--
 	}
 	return m, nil
 }
@@ -119,8 +112,10 @@ func (m Model) handleDownKey() (tea.Model, tea.Cmd) {
 	} else if m.ActiveTab == TabProcesses && m.ProcessCursor < len(m.Processes)-1 {
 		m.ProcessCursor++
 	} else if m.ActiveTab == TabActions {
-		actions := bridge.GetAllKeyActions()
-		m.KeypadCursor = (m.KeypadCursor + 1) % len(actions)
+		cols := bridge.GetKeypadColumns()
+		if m.KeypadRow < len(cols[m.KeypadCol])-1 {
+			m.KeypadRow++
+		}
 	}
 	return m, nil
 }
