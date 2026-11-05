@@ -75,7 +75,8 @@ func PurgeAppCache(exec *bridge.Executor) (string, error) {
 }
 
 func DeleteDevicePath(exec *bridge.Executor, targetPath string) error {
-	_, err := exec.RunADBWithTimeout(8*time.Second, "shell", "rm", "-rf", targetPath)
+	quoted := fmt.Sprintf("\"%s\"", targetPath)
+	_, err := exec.RunADBWithTimeout(8*time.Second, "shell", "rm", "-rf", quoted)
 	return err
 }
 

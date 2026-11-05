@@ -2,6 +2,11 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.6.3] - 2026-11-05
+
+### Fixed
+* Fixed DiskMan list not updating immediately after deleting files: correctly scoped parent path fallback, shell path quoting with spaces, and instant UI state invalidation to trigger live re-scan.
+
 ## [v0.6.2] - 2026-11-05
 
 ### Added
