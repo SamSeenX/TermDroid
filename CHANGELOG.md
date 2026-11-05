@@ -2,6 +2,15 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.3.0] - 2026-11-05
+
+### Added
+* Dedicated Hardware Keypad & Control Deck on Tab 5 featuring 27 categorized button simulations.
+* Support for Navigation, Audio & Volume, Media Playback, Status Panels, D-Pad Remote, and Text Clipboard commands.
+* Multi-device switcher hotkey (d) to cycle active target devices.
+* Wireless device forget/disconnect hotkey (x) triggering adb disconnect.
+* On-demand Add Device modal trigger (a) to summon the Connection Wizard anytime.
+
 ## [v0.2.2] - 2026-11-05
 
 ### Added

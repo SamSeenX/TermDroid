@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"termdroid/internal/bridge"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -28,6 +29,33 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.ActiveTab = Tab(idx)
 		return m, m.onTabChanged()
 
+	case "d":
+		if len(m.Devices) > 1 {
+			m.ActiveDevice = (m.ActiveDevice + 1) % len(m.Devices)
+			m.Executor.DeviceID = m.Devices[m.ActiveDevice].ID
+			m.Status = fmt.Sprintf("Switched focus to %s (%s)", m.Devices[m.ActiveDevice].Model, m.Devices[m.ActiveDevice].ID)
+			return m, LoadVitalsCmd(m.Executor)
+		}
+		m.Status = fmt.Sprintf("Current device: %s (No other devices detected)", m.Devices[0].Model)
+		return m, nil
+
+	case "x":
+		if len(m.Devices) > 0 {
+			dev := m.Devices[m.ActiveDevice]
+			if dev.IsWireless {
+				m.Status = fmt.Sprintf("Disconnecting %s...", dev.ID)
+				return m, DisconnectDeviceCmd(m.Executor, dev.ID)
+			}
+			m.Status = "USB devices cannot be disconnected via software. Unplug cable."
+			return m, nil
+		}
+
+	case "a":
+		m.Devices = nil
+		m.Wizard = InitialWizardState()
+		m.Status = "Opening Device Setup Wizard..."
+		return m, TickCmd()
+
 	case "r":
 		m.IsLoading = true
 		return m, m.onTabChanged()
@@ -37,7 +65,7 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, LaunchMirrorCmd(m.Executor, false)
 
 	case "p":
-		m.Status = "Launching Scrcpy in Presentation Mode (screen off)..."
+		m.Status = "Launching Scrcpy in Presentation Mode..."
 		return m, LaunchMirrorCmd(m.Executor, true)
 
 	case "s":
@@ -49,29 +77,51 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, SwitchWifiCmd(m.Executor)
 
 	case "up", "k":
-		if m.ActiveTab == TabStorage && m.StorageCursor > 0 {
-			m.StorageCursor--
-		} else if m.ActiveTab == TabProcesses && m.ProcessCursor > 0 {
-			m.ProcessCursor--
-		}
-		return m, nil
+		return m.handleUpKey()
 
 	case "down", "j":
-		if m.ActiveTab == TabStorage && m.Storage != nil && m.StorageCursor < len(m.Storage.Items)-1 {
-			m.StorageCursor++
-		} else if m.ActiveTab == TabProcesses && m.ProcessCursor < len(m.Processes)-1 {
-			m.ProcessCursor++
+		return m.handleDownKey()
+
+	case "enter":
+		if m.ActiveTab == TabActions {
+			actions := bridge.GetAllKeyActions()
+			if m.KeypadCursor >= 0 && m.KeypadCursor < len(actions) {
+				act := actions[m.KeypadCursor]
+				m.Status = fmt.Sprintf("Triggering %s...", act.Name)
+				return m, ExecuteKeypadCmd(m.Executor, act)
+			}
 		}
 		return m, nil
-
-	case "h":
-		return m, SendKeyCmd(m.Executor, bridge.KeyHome)
-	case "b":
-		return m, SendKeyCmd(m.Executor, bridge.KeyBack)
-	case "o":
-		return m, SendKeyCmd(m.Executor, bridge.KeyPower)
 	}
 
+	return m, nil
+}
+
+func (m Model) handleUpKey() (tea.Model, tea.Cmd) {
+	if m.ActiveTab == TabStorage && m.StorageCursor > 0 {
+		m.StorageCursor--
+	} else if m.ActiveTab == TabProcesses && m.ProcessCursor > 0 {
+		m.ProcessCursor--
+	} else if m.ActiveTab == TabActions {
+		actions := bridge.GetAllKeyActions()
+		if m.KeypadCursor > 0 {
+			m.KeypadCursor--
+		} else {
+			m.KeypadCursor = len(actions) - 1
+		}
+	}
+	return m, nil
+}
+
+func (m Model) handleDownKey() (tea.Model, tea.Cmd) {
+	if m.ActiveTab == TabStorage && m.Storage != nil && m.StorageCursor < len(m.Storage.Items)-1 {
+		m.StorageCursor++
+	} else if m.ActiveTab == TabProcesses && m.ProcessCursor < len(m.Processes)-1 {
+		m.ProcessCursor++
+	} else if m.ActiveTab == TabActions {
+		actions := bridge.GetAllKeyActions()
+		m.KeypadCursor = (m.KeypadCursor + 1) % len(actions)
+	}
 	return m, nil
 }
 
@@ -95,7 +145,7 @@ func (m *Model) onTabChanged() tea.Cmd {
 		m.IsLoading = true
 		return LoadLogcatCmd(m.Executor)
 	case TabActions:
-		return LoadVitalsCmd(m.Executor)
+		return nil
 	}
 	return nil
 }

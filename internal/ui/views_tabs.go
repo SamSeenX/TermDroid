@@ -16,7 +16,7 @@ func (m Model) renderActiveTab() string {
 	case TabLogcat:
 		return m.renderLogcatTab()
 	case TabActions:
-		return m.renderActionsTab()
+		return m.renderKeypadScreen()
 	}
 	return ""
 }
@@ -125,16 +125,5 @@ func (m Model) renderLogcatTab() string {
 		}
 		s.WriteString("  " + StyleNormalRow.Render(line) + "\n")
 	}
-	return s.String()
-}
-
-func (m Model) renderActionsTab() string {
-	var s strings.Builder
-	s.WriteString(StyleHeader.Render("Hardware & System Simulation Shortcuts") + "\n\n")
-	s.WriteString(StyleNormalRow.Render("  [h] Send Home Keyevent (3)") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [b] Send Back Keyevent (4)") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [o] Toggle Power Button (26)") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [s] Capture Instant Screen Frame") + "\n")
-	s.WriteString(StyleNormalRow.Render("  [w] Switch to TCP/IP Wireless Mode") + "\n")
 	return s.String()
 }

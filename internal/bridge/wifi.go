@@ -98,3 +98,15 @@ func (e *Executor) PairDevice(ipPort, code string) (string, error) {
 
 	return fmt.Sprintf("Paired with %s (%s)", ipPort, strings.TrimSpace(connectOut)), nil
 }
+
+func (e *Executor) DisconnectDevice(target string) error {
+	if target == "" {
+		target = e.DeviceID
+	}
+	args := []string{"disconnect"}
+	if target != "" {
+		args = append(args, target)
+	}
+	_, err := e.RunADBWithTimeout(5*time.Second, args...)
+	return err
+}

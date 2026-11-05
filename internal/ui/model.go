@@ -23,7 +23,7 @@ var TabNames = []string{
 	"2. DiskMan Storage",
 	"3. Processes",
 	"4. Logcat",
-	"5. Hardware & Quick Actions",
+	"5. Hardware Keypad & Control",
 }
 
 type DevicesLoadedMsg []bridge.DeviceInfo
@@ -45,6 +45,7 @@ type Model struct {
 	LogLines      []string
 	StorageCursor int
 	ProcessCursor int
+	KeypadCursor  int
 	Status        string
 	Width         int
 	Height        int
@@ -60,6 +61,7 @@ func InitialModel() Model {
 		Status:        "Checking for connected Android devices...",
 		StorageCursor: 0,
 		ProcessCursor: 0,
+		KeypadCursor:  0,
 		IsLoading:     false,
 		Wizard:        InitialWizardState(),
 	}
