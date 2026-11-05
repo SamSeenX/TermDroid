@@ -2,6 +2,11 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.6.1] - 2026-11-05
+
+### Fixed
+* Added multi-tier fallback for pulling device clipboard (`dumpsys clipboard` fallback) and user guidance when Android 13-17 restricts background clipboard reads.
+
 ## [v0.6.0] - 2026-11-05
 
 ### Added
