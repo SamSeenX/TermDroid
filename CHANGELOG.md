@@ -2,6 +2,11 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.1] - 2026-11-05
+
+### UX & Keybindings
+* Verified global universality of `r` (refresh current view data) and `q` / `ctrl+c` (instant quit) across all 6 tabs, the USB connection wizard, and modal input overlays.
+
 ## [v0.5.0] - 2026-11-05
 
 ### Added

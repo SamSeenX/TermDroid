@@ -12,6 +12,9 @@ func (m Model) handlePinModalKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	keyStr := msg.String()
 
 	switch keyStr {
+	case "ctrl+c":
+		return m, tea.Quit
+
 	case "esc":
 		m.PinModalOpen = false
 		m.PinInput = ""
