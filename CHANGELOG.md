@@ -2,6 +2,14 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.7.1] - 2026-11-05
+
+### Universal Cross-Platform Support
+* Universal OS adapters replacing macOS-specific clipboard and viewer utilities.
+* Added native Linux support for Wayland (wl-copy, wl-paste) and X11 (xclip), with xdg-open for default file viewing.
+* Added native Windows support using PowerShell clipboard commands and start file viewer.
+* Added dynamic binary discovery for adb and scrcpy across macOS, Linux (/usr/bin), and Windows (.exe).
+
 ## [v0.7.0] - 2026-11-05
 
 ### UI & Aesthetics

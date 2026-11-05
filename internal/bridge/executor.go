@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"os/exec"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -23,11 +24,23 @@ type Executor struct {
 func NewExecutor(deviceID string) *Executor {
 	adb, err := exec.LookPath("adb")
 	if err != nil {
-		adb = "/opt/homebrew/bin/adb"
+		if runtime.GOOS == "darwin" {
+			adb = "/opt/homebrew/bin/adb"
+		} else if runtime.GOOS == "windows" {
+			adb = "adb.exe"
+		} else {
+			adb = "/usr/bin/adb"
+		}
 	}
 	scrcpy, err := exec.LookPath("scrcpy")
 	if err != nil {
-		scrcpy = "/opt/homebrew/bin/scrcpy"
+		if runtime.GOOS == "darwin" {
+			scrcpy = "/opt/homebrew/bin/scrcpy"
+		} else if runtime.GOOS == "windows" {
+			scrcpy = "scrcpy.exe"
+		} else {
+			scrcpy = "/usr/bin/scrcpy"
+		}
 	}
 	return &Executor{
 		ADBPath:    adb,

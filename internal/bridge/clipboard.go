@@ -1,28 +1,23 @@
 package bridge
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"os/exec"
 	"strings"
 	"time"
 )
 
 func (e *Executor) PushClipboardToDevice() (string, error) {
-	pbCmd := exec.Command("pbpaste")
-	var pbOut bytes.Buffer
-	pbCmd.Stdout = &pbOut
-	if err := pbCmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to read mac clipboard: %w", err)
+	text, err := ReadHostClipboard()
+	if err != nil {
+		return "", fmt.Errorf("failed to read host clipboard: %w", err)
 	}
 
-	text := strings.TrimSpace(pbOut.String())
 	if text == "" {
-		return "", errors.New("mac clipboard is empty")
+		return "", errors.New("host clipboard is empty")
 	}
 
-	_, err := e.RunADBWithTimeout(4*time.Second, "shell", "cmd", "clipboard", "set", "text", text)
+	_, err = e.RunADBWithTimeout(4*time.Second, "shell", "cmd", "clipboard", "set", "text", text)
 	if err != nil {
 		escaped := fmt.Sprintf("\"%s\"", text)
 		_, err = e.RunADBWithTimeout(4*time.Second, "shell", "input", "text", escaped)
@@ -60,18 +55,16 @@ func (e *Executor) PullClipboardFromDevice() (string, error) {
 	}
 
 	if text == "" {
-		return "Tip: Android 13+ restricts background clipboard reads. When Scrcpy mirror is open [m], copied text syncs to Mac automatically.", nil
+		return "Tip: Android 13+ restricts background clipboard reads. When Scrcpy mirror is open [m], copied text syncs to host automatically.", nil
 	}
 
-	pbCmd := exec.Command("pbcopy")
-	pbCmd.Stdin = strings.NewReader(text)
-	if err := pbCmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to write to mac clipboard: %w", err)
+	if err := WriteHostClipboard(text); err != nil {
+		return "", fmt.Errorf("failed to write to host clipboard: %w", err)
 	}
 
 	preview := text
 	if len(preview) > 25 {
 		preview = preview[:22] + "..."
 	}
-	return fmt.Sprintf("Copied from phone to Mac: '%s'", preview), nil
+	return fmt.Sprintf("Copied from phone to host: '%s'", preview), nil
 }

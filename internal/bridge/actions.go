@@ -51,7 +51,7 @@ func (e *Executor) TakeScreenshot(destPath string) (string, error) {
 		return "", err
 	}
 
-	exec.Command("open", "-a", "Preview", destPath).Start()
+	OpenFileWithDefaultViewer(destPath)
 
 	return destPath, nil
 }
