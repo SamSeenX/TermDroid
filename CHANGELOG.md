@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.5.5] - 2026-11-05
+
+### Fixed
+* Fixed DiskMan Storage Scanner failing on modern Android versions (Android 11 through Android 17).
+* Replaced recursive `du -d 1 /sdcard` with per-directory scanning that gracefully bypasses SELinux restricted `/sdcard/Android/data` subdirectories, preventing permission denied errors and command aborts.
+
 ## [v0.5.4] - 2026-11-05
 
 ### Added
