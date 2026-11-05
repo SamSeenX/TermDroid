@@ -85,6 +85,16 @@ func SwitchWifiCmd(exec *bridge.Executor) tea.Cmd {
 	}
 }
 
+func PairDeviceCmd(exec *bridge.Executor, ipPort, code string) tea.Cmd {
+	return func() tea.Msg {
+		res, err := exec.PairDevice(ipPort, code)
+		if err != nil {
+			return StatusMsg(fmt.Sprintf("Pairing failed: %v", err))
+		}
+		return StatusMsg(res)
+	}
+}
+
 func TakeScreenshotCmd(exec *bridge.Executor) tea.Cmd {
 	return func() tea.Msg {
 		path, err := exec.TakeScreenshot("")

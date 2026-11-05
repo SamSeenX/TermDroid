@@ -17,6 +17,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case StatusMsg:
 		m.Status = string(msg)
 		m.IsLoading = false
+		m.Wizard.IsPairing = false
+		return m, nil
+
+	case TickMsg:
+		m.Wizard.TickCount++
+		if len(m.Devices) == 0 {
+			if m.Wizard.Mode == WizardUSB {
+				return m, tea.Batch(LoadDevicesCmd(m.Executor), TickCmd())
+			}
+			return m, TickCmd()
+		}
 		return m, nil
 
 	case DevicesLoadedMsg:
@@ -28,7 +39,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Status = fmt.Sprintf("Connected to %s (%s)", m.Devices[0].Model, m.Devices[0].ID)
 			return m, LoadVitalsCmd(m.Executor)
 		}
-		m.Status = "No Android device detected. Connect via USB and allow USB debugging."
+		m.Status = "Monitoring for USB cable connection..."
 		return m, nil
 
 	case VitalsLoadedMsg:
@@ -61,6 +72,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if len(m.Devices) == 0 {
+		return m.handleWizardKeys(msg)
+	}
+
 	switch msg.String() {
 	case "ctrl+c", "q":
 		return m, tea.Quit

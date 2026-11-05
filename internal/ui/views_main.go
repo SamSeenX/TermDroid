@@ -8,6 +8,10 @@ import (
 )
 
 func (m Model) View() string {
+	if len(m.Devices) == 0 {
+		return m.renderWizard()
+	}
+
 	var b strings.Builder
 
 	b.WriteString(m.renderHeader())
