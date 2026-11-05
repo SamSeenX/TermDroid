@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
@@ -51,6 +52,25 @@ func (e *Executor) TakeScreenshot(destPath string) (string, error) {
 	}
 
 	return destPath, nil
+}
+
+func (e *Executor) Tap(x, y int) error {
+	args := []string{"shell", "input", "tap", strconv.Itoa(x), strconv.Itoa(y)}
+	_, err := e.RunADBWithTimeout(3*time.Second, args...)
+	return err
+}
+
+func (e *Executor) Swipe(x1, y1, x2, y2, durationMs int) error {
+	args := []string{
+		"shell", "input", "swipe",
+		strconv.Itoa(x1), strconv.Itoa(y1),
+		strconv.Itoa(x2), strconv.Itoa(y2),
+	}
+	if durationMs > 0 {
+		args = append(args, strconv.Itoa(durationMs))
+	}
+	_, err := e.RunADBWithTimeout(4*time.Second, args...)
+	return err
 }
 
 func (e *Executor) OpenURL(url string) error {

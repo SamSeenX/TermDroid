@@ -26,6 +26,12 @@ func handleCLICommand(command string, args []string) {
 	case "shot", "screenshot":
 		handleScreenshotCmd(exec, args)
 
+	case "tap":
+		handleTapCmd(exec, args)
+
+	case "swipe":
+		handleSwipeCmd(exec, args)
+
 	case "clipboard":
 		handleClipboardCmd(exec, args)
 

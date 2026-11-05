@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.1] - 2026-11-05
+
+### Added
+* Headless coordinate tap simulation (`termdroid tap <X> <Y>`).
+* Headless gesture swipe simulation with custom duration (`termdroid swipe <X1> <Y1> <X2> <Y2> [duration]`).
+
 ## [v0.4.0] - 2026-11-05
 
 ### Added
