@@ -1,0 +1,19 @@
+# Binaries and build outputs
+termdroid
+/bin/
+/dist/
+*.exe
+*.test
+*.out
+
+# Go workspace
+go.work
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temp and logs
+*.log
+/tmp/
