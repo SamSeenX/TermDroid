@@ -109,7 +109,7 @@ func (m Model) renderStorageTab() string {
 		navHint = fmt.Sprintf("▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Back | [x]: Delete | [r]: Re-scan")
 	}
 	if m.ConfirmDelete {
-		navHint = fmt.Sprintf("CONFIRM DELETION of %s? Press [Shift+Y] to delete permanently, [Esc] to cancel", m.DeleteTarget)
+		navHint = fmt.Sprintf("CONFIRM DELETION of %s? Press [y] to delete permanently, [Esc] to cancel", m.DeleteTarget)
 		s.WriteString("\n" + StyleErrorBadge.Render("  "+navHint))
 	} else {
 		s.WriteString("\n" + StyleHelp.Render("  "+navHint))
