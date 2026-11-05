@@ -18,6 +18,8 @@ func TestBuildScrcpyArgs(t *testing.T) {
 		AlwaysOnTop:   true,
 		MaxSize:       1024,
 		BitRate:       "4M",
+		MaxFps:        60,
+		VideoCodec:    "h264",
 		WindowTitle:   "Custom Window",
 	}
 
@@ -32,6 +34,8 @@ func TestBuildScrcpyArgs(t *testing.T) {
 		"--always-on-top",
 		"--max-size=1024",
 		"--video-bit-rate=4M",
+		"--max-fps=60",
+		"--video-codec=h264",
 		"--window-title=Custom Window",
 	}
 

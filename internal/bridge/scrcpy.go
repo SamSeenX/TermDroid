@@ -9,14 +9,16 @@ import (
 )
 
 type MirrorOptions struct {
-	TurnScreenOff    bool
-	StayAwake        bool
-	Borderless       bool
-	RecordPath       string
-	MaxSize          int
-	BitRate          string
-	AlwaysOnTop      bool
-	WindowTitle      string
+	TurnScreenOff bool
+	StayAwake     bool
+	Borderless    bool
+	RecordPath    string
+	MaxSize       int
+	BitRate       string
+	MaxFps        int
+	VideoCodec    string
+	AlwaysOnTop   bool
+	WindowTitle   string
 }
 
 func (e *Executor) BuildScrcpyArgs(opts MirrorOptions) []string {
@@ -37,12 +39,31 @@ func (e *Executor) BuildScrcpyArgs(opts MirrorOptions) []string {
 	if opts.AlwaysOnTop {
 		args = append(args, "--always-on-top")
 	}
-	if opts.MaxSize > 0 {
-		args = append(args, fmt.Sprintf("--max-size=%d", opts.MaxSize))
+
+	maxSize := opts.MaxSize
+	if maxSize <= 0 {
+		maxSize = 1200
 	}
-	if opts.BitRate != "" {
-		args = append(args, fmt.Sprintf("--video-bit-rate=%s", opts.BitRate))
+	args = append(args, fmt.Sprintf("--max-size=%d", maxSize))
+
+	bitRate := opts.BitRate
+	if bitRate == "" {
+		bitRate = "6M"
 	}
+	args = append(args, fmt.Sprintf("--video-bit-rate=%s", bitRate))
+
+	maxFps := opts.MaxFps
+	if maxFps <= 0 {
+		maxFps = 60
+	}
+	args = append(args, fmt.Sprintf("--max-fps=%d", maxFps))
+
+	codec := opts.VideoCodec
+	if codec == "" {
+		codec = "h264"
+	}
+	args = append(args, fmt.Sprintf("--video-codec=%s", codec))
+
 	if opts.RecordPath != "" {
 		args = append(args, fmt.Sprintf("--record=%s", opts.RecordPath))
 	}
@@ -76,6 +97,9 @@ func (e *Executor) StartRecordingProcess(destPath string) (*exec.Cmd, string, er
 	opts := MirrorOptions{
 		StayAwake:   true,
 		RecordPath:  destPath,
+		MaxSize:     1200,
+		BitRate:     "6M",
+		MaxFps:      60,
 		WindowTitle: "TermDroid Recording Active",
 	}
 

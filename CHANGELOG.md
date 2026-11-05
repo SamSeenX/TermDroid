@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.4.2] - 2026-11-05
+
+### Fixed
+* Resolved frozen video stream issue over Wi-Fi on high-resolution devices like Pixel 6 Pro.
+* Capped wireless stream bounds to 1200p resolution, 6Mbps video bitrate, and 60 FPS.
+* Enforced explicit H.264 video codec encoding preventing packet loss decoder stalls.
+
 ## [v0.4.1] - 2026-11-05
 
 ### Added
