@@ -20,27 +20,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Wizard.IsPairing = false
 		return m, nil
 
+	case PairingSuccessMsg:
+		m.Status = string(msg)
+		m.Wizard.IsPairing = false
+		return m, LoadDevicesCmd(m.Executor)
+
 	case TickMsg:
 		m.Wizard.TickCount++
 		if len(m.Devices) == 0 {
-			if m.Wizard.Mode == WizardUSB {
-				return m, tea.Batch(LoadDevicesCmd(m.Executor), TickCmd())
-			}
-			return m, TickCmd()
+			return m, tea.Batch(LoadDevicesCmd(m.Executor), TickCmd())
 		}
-		return m, nil
+		return m, TickCmd()
 
 	case DevicesLoadedMsg:
-		m.Devices = msg
-		m.IsLoading = false
-		if len(m.Devices) > 0 {
-			m.ActiveDevice = 0
-			m.Executor.DeviceID = m.Devices[0].ID
-			m.Status = fmt.Sprintf("Connected to %s (%s)", m.Devices[0].Model, m.Devices[0].ID)
-			return m, LoadVitalsCmd(m.Executor)
-		}
-		m.Status = "Monitoring for USB cable connection..."
-		return m, nil
+		return m.handleDevicesLoaded(msg)
 
 	case VitalsLoadedMsg:
 		m.Vitals = msg
@@ -49,7 +42,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case StorageLoadedMsg:
 		m.Storage = msg
 		m.IsLoading = false
-		m.Status = fmt.Sprintf("Storage scanned: %s used / %s total", m.Storage.UsedSpace, m.Storage.TotalSpace)
+		m.Status = fmt.Sprintf("Storage: %s used of %s", m.Storage.UsedSpace, m.Storage.TotalSpace)
 		return m, nil
 
 	case ProcessesLoadedMsg:
@@ -71,96 +64,41 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	if len(m.Devices) == 0 {
-		return m.handleWizardKeys(msg)
+func (m Model) handleDevicesLoaded(msg DevicesLoadedMsg) (tea.Model, tea.Cmd) {
+	m.IsLoading = false
+	var authorized []bridge.DeviceInfo
+	var unauthorized []bridge.DeviceInfo
+
+	for _, d := range msg {
+		if d.State == "device" {
+			authorized = append(authorized, d)
+		} else if d.State == "unauthorized" {
+			unauthorized = append(unauthorized, d)
+		}
 	}
 
-	switch msg.String() {
-	case "ctrl+c", "q":
-		return m, tea.Quit
-
-	case "tab":
-		m.ActiveTab = (m.ActiveTab + 1) % 5
-		return m, m.onTabChanged()
-
-	case "shift+tab":
-		m.ActiveTab = (m.ActiveTab + 4) % 5
-		return m, m.onTabChanged()
-
-	case "1", "2", "3", "4", "5":
-		idx := int(msg.Runes[0] - '1')
-		m.ActiveTab = Tab(idx)
-		return m, m.onTabChanged()
-
-	case "r":
-		m.IsLoading = true
-		return m, m.onTabChanged()
-
-	case "m":
-		m.Status = "Launching Scrcpy live mirror..."
-		return m, LaunchMirrorCmd(m.Executor, false)
-
-	case "p":
-		m.Status = "Launching Scrcpy in Presentation Mode (screen off)..."
-		return m, LaunchMirrorCmd(m.Executor, true)
-
-	case "s":
-		m.Status = "Capturing screen frame..."
-		return m, TakeScreenshotCmd(m.Executor)
-
-	case "w":
-		m.Status = "Negotiating wireless TCP/IP bridge..."
-		return m, SwitchWifiCmd(m.Executor)
-
-	case "up", "k":
-		if m.ActiveTab == TabStorage && m.StorageCursor > 0 {
-			m.StorageCursor--
-		} else if m.ActiveTab == TabProcesses && m.ProcessCursor > 0 {
-			m.ProcessCursor--
+	if len(authorized) > 0 {
+		m.Devices = authorized
+		m.ActiveDevice = 0
+		m.Executor.DeviceID = authorized[0].ID
+		mode := "USB"
+		if authorized[0].IsWireless {
+			mode = "Wi-Fi"
 		}
-		return m, nil
-
-	case "down", "j":
-		if m.ActiveTab == TabStorage && m.Storage != nil && m.StorageCursor < len(m.Storage.Items)-1 {
-			m.StorageCursor++
-		} else if m.ActiveTab == TabProcesses && m.ProcessCursor < len(m.Processes)-1 {
-			m.ProcessCursor++
-		}
-		return m, nil
-
-	case "h":
-		return m, SendKeyCmd(m.Executor, bridge.KeyHome)
-	case "b":
-		return m, SendKeyCmd(m.Executor, bridge.KeyBack)
-	case "o":
-		return m, SendKeyCmd(m.Executor, bridge.KeyPower)
+		m.Status = fmt.Sprintf("Connected to %s via %s", authorized[0].Model, mode)
+		return m, LoadVitalsCmd(m.Executor)
 	}
 
+	m.Devices = nil
+	if len(unauthorized) > 0 {
+		dev := unauthorized[0]
+		m.Status = fmt.Sprintf("Found %s: UNAUTHORIZED. Tap 'Allow' on phone screen.", dev.Model)
+		m.Wizard.ErrorMsg = "Device unauthorized. Check phone and tap 'Allow USB debugging'."
+		return m, nil
+	}
+
+	if m.Wizard.Mode == WizardUSB {
+		m.Status = "Monitoring for USB cable connection..."
+	}
 	return m, nil
-}
-
-func (m *Model) onTabChanged() tea.Cmd {
-	if len(m.Devices) == 0 {
-		return LoadDevicesCmd(m.Executor)
-	}
-
-	switch m.ActiveTab {
-	case TabMirror:
-		return LoadVitalsCmd(m.Executor)
-	case TabStorage:
-		if m.Storage == nil {
-			m.IsLoading = true
-			return LoadStorageCmd(m.Executor)
-		}
-	case TabProcesses:
-		m.IsLoading = true
-		return LoadProcessesCmd(m.Executor)
-	case TabLogcat:
-		m.IsLoading = true
-		return LoadLogcatCmd(m.Executor)
-	case TabActions:
-		return LoadVitalsCmd(m.Executor)
-	}
-	return nil
 }

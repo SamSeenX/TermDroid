@@ -32,6 +32,7 @@ type StorageLoadedMsg *storage.StorageSummary
 type ProcessesLoadedMsg []diagnostics.ProcessItem
 type LogcatLoadedMsg []string
 type StatusMsg string
+type PairingSuccessMsg string
 
 type Model struct {
 	Executor      *bridge.Executor
@@ -56,7 +57,7 @@ func InitialModel() Model {
 	return Model{
 		Executor:      exec,
 		ActiveTab:     TabMirror,
-		Status:        "Monitoring for Android devices...",
+		Status:        "Checking for connected Android devices...",
 		StorageCursor: 0,
 		ProcessCursor: 0,
 		IsLoading:     false,

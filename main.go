@@ -38,9 +38,13 @@ func handleCLICommand(command string, args []string) {
 		for _, d := range devs {
 			mode := "USB"
 			if d.IsWireless {
-				mode = "Wi-Fi TCP/IP"
+				mode = "Wi-Fi"
 			}
-			fmt.Printf("- %s [%s] (%s)\n", d.Model, d.ID, mode)
+			stateNotice := ""
+			if d.State == "unauthorized" {
+				stateNotice = " [UNAUTHORIZED: Tap Allow on phone]"
+			}
+			fmt.Printf("- %s [%s] (%s)%s\n", d.Model, d.ID, mode, stateNotice)
 		}
 
 	case "mirror":
