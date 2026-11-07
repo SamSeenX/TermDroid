@@ -55,37 +55,55 @@ func (m Model) handleDeleteKey() (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	if m.StorageCursor < len(m.Storage.Items) {
-		selected := m.Storage.Items[m.StorageCursor]
-		m.DeleteTarget = selected.Path
-		m.ConfirmDelete = true
-		m.Status = fmt.Sprintf("Delete %s? Press [y] to confirm, [Esc] to cancel", selected.Path)
+	targets := m.getMarkedOrCursorPaths()
+	if len(targets) == 0 {
+		return m, nil
+	}
+
+	m.ConfirmDelete = true
+	if len(targets) == 1 {
+		m.DeleteTarget = targets[0]
+		m.Status = fmt.Sprintf("Delete %s? Press [y] to confirm, [Esc] to cancel", targets[0])
+	} else {
+		m.DeleteTarget = fmt.Sprintf("%d items", len(targets))
+		m.Status = fmt.Sprintf("Delete %d items? Press [y] to confirm, [Esc] to cancel", len(targets))
 	}
 	return m, nil
 }
 
 func (m Model) handleConfirmDelete() (tea.Model, tea.Cmd) {
-	if m.ConfirmDelete && m.DeleteTarget != "" {
-		target := m.DeleteTarget
-		m.ConfirmDelete = false
-		m.DeleteTarget = ""
-
-		var remaining []storage.StorageItem
-		for _, it := range m.Storage.Items {
-			if it.Path != target {
-				remaining = append(remaining, it)
-			}
-		}
-		m.Storage.Items = remaining
-
-		if m.StorageCursor >= len(remaining) && len(remaining) > 0 {
-			m.StorageCursor = len(remaining) - 1
-		}
-
-		m.Status = fmt.Sprintf("Deleting %s from device...", target)
-		return m, DeleteStorageItemCmd(m.Executor, target)
+	if !m.ConfirmDelete {
+		return m, nil
 	}
-	return m, nil
+
+	targets := m.getMarkedOrCursorPaths()
+	m.ConfirmDelete = false
+	m.DeleteTarget = ""
+	m.SelectedFiles = make(map[string]bool)
+
+	if len(targets) == 0 {
+		return m, nil
+	}
+
+	targetMap := make(map[string]bool)
+	for _, t := range targets {
+		targetMap[t] = true
+	}
+
+	var remaining []storage.StorageItem
+	for _, it := range m.Storage.Items {
+		if !targetMap[it.Path] {
+			remaining = append(remaining, it)
+		}
+	}
+	m.Storage.Items = remaining
+
+	if m.StorageCursor >= len(remaining) && len(remaining) > 0 {
+		m.StorageCursor = len(remaining) - 1
+	}
+
+	m.Status = fmt.Sprintf("Deleting %d item(s) from device...", len(targets))
+	return m, BatchDeleteStorageCmd(m.Executor, targets)
 }
 
 func (m Model) handleActionShortcut(keyStr string) (tea.Model, tea.Cmd) {
@@ -94,4 +112,35 @@ func (m Model) handleActionShortcut(keyStr string) (tea.Model, tea.Cmd) {
 		return m, ExecuteKeypadCmd(m.Executor, act)
 	}
 	return m, nil
+}
+
+func handleMirrorKeys(m Model, keyStr string) (Model, tea.Cmd, bool) {
+	if m.ActiveTab != TabMirror {
+		return m, nil, false
+	}
+	switch keyStr {
+	case "m":
+		m.Status = "Launching Scrcpy live mirror..."
+		return m, LaunchMirrorCmd(m.Executor, false), true
+	case "p":
+		m.Status = "Launching Scrcpy in Presentation Mode..."
+		return m, LaunchMirrorCmd(m.Executor, true), true
+	case "v":
+		m.Status = "Initiating live screen recording..."
+		return m, StartRecordingCmd(m.Executor), true
+	case "o":
+		m.Status = "Launching mobile audio forwarder..."
+		return m, LaunchAudioStreamCmd(m.Executor), true
+	case "c":
+		m.Status = "Pushing host clipboard to phone..."
+		return m, PushClipboardCmd(m.Executor), true
+	case "s":
+		m.Status = "Capturing screen frame..."
+		return m, TakeScreenshotCmd(m.Executor), true
+	case "k":
+		m.Status = "Injecting wake and swipe unlock gesture..."
+		return m, UnlockDeviceCmd(m.Executor, ""), true
+	default:
+		return m, nil, false
+	}
 }

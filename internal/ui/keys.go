@@ -19,7 +19,19 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleTextModalKeys(msg)
 	}
 
+	if m.StorageModalOpen {
+		return handleStorageModalKey(m, msg)
+	}
+
 	keyStr := msg.String()
+
+	if newM, cmd, handled := handleStorageKeys(m, keyStr); handled {
+		return newM, cmd
+	}
+
+	if newM, cmd, handled := handleMirrorKeys(m, keyStr); handled {
+		return newM, cmd
+	}
 
 	switch keyStr {
 	case "ctrl+c", "q":
@@ -68,41 +80,6 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.IsLoading = true
 		return m, m.onTabChanged()
 
-	case "m":
-		m.Status = "Launching Scrcpy live mirror..."
-		return m, LaunchMirrorCmd(m.Executor, false)
-
-	case "p":
-		m.Status = "Launching Scrcpy in Presentation Mode..."
-		return m, LaunchMirrorCmd(m.Executor, true)
-
-	case "v":
-		if m.ActiveTab == TabMirror {
-			m.Status = "Initiating live screen recording..."
-			return m, StartRecordingCmd(m.Executor)
-		}
-
-	case "o":
-		if m.ActiveTab == TabMirror {
-			m.Status = "Launching mobile audio forwarder (Phone ➔ Mac)..."
-			return m, LaunchAudioStreamCmd(m.Executor)
-		}
-
-	case "c":
-		if m.ActiveTab == TabMirror {
-			m.Status = "Pushing Mac clipboard to phone..."
-			return m, PushClipboardCmd(m.Executor)
-		} else if m.ActiveTab == TabStorage {
-			m.Status = "Purging application cache directories..."
-			return m, PurgeCacheCmd(m.Executor)
-		}
-
-	case "s":
-		if m.ActiveTab == TabMirror {
-			m.Status = "Capturing screen frame..."
-			return m, TakeScreenshotCmd(m.Executor)
-		}
-
 	case "w":
 		m.Status = "Negotiating wireless TCP/IP bridge..."
 		return m, SwitchWifiCmd(m.Executor)
@@ -128,12 +105,6 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.PinInput = ""
 		m.Status = "Updating saved unlock PIN..."
 		return m, nil
-
-	case "k":
-		if m.ActiveTab == TabMirror {
-			m.Status = "Injecting wake and swipe unlock gesture..."
-			return m, UnlockDeviceCmd(m.Executor, "")
-		}
 
 	case "y", "Y":
 		if m.ConfirmDelete {

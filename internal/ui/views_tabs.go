@@ -64,59 +64,6 @@ func (m Model) renderMirrorTab() string {
 	return s.String()
 }
 
-func (m Model) renderStorageTab() string {
-	var s strings.Builder
-	currentPath := m.StoragePath
-	if currentPath == "" {
-		currentPath = "/sdcard"
-	}
-
-	title := fmt.Sprintf("DiskMan Storage: %s", currentPath)
-	s.WriteString(StyleHeaderMuted.Render(title) + "\n\n")
-
-	if m.Storage == nil || len(m.Storage.Items) == 0 {
-		s.WriteString(StyleHelp.Render("  Scanning directory breakdown... Press [r] to refresh.") + "\n")
-		return s.String()
-	}
-
-	header := fmt.Sprintf("  Used: %s | Free: %s | Total: %s (%s utilized)",
-		m.Storage.UsedSpace, m.Storage.FreeSpace, m.Storage.TotalSpace, m.Storage.Percent)
-	s.WriteString(StyleHelp.Render(header) + "\n\n")
-
-	limit := 12
-	if len(m.Storage.Items) < limit {
-		limit = len(m.Storage.Items)
-	}
-
-	for i := 0; i < limit; i++ {
-		item := m.Storage.Items[i]
-		cursor := "  "
-		style := StyleNormalRow
-		if i == m.StorageCursor {
-			cursor = "▶ "
-			style = StyleSelectedRow
-		}
-		icon := "📁 "
-		if !item.IsDir {
-			icon = "📄 "
-		}
-		line := fmt.Sprintf("%s%-10s  %-16s  %s%s", cursor, item.SizeHuman, item.Category, icon, item.Path)
-		s.WriteString(style.Render(line) + "\n")
-	}
-
-	navHint := "▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Go Up | [x]: Delete | [c]: Purge Cache"
-	if len(m.StorageStack) > 0 {
-		navHint = fmt.Sprintf("▲/▼: Select | [Enter]: Open | [Esc/Backspace]: Back | [x]: Delete | [r]: Re-scan")
-	}
-	if m.ConfirmDelete {
-		navHint = fmt.Sprintf("CONFIRM DELETION of %s? Press [y] to delete permanently, [Esc] to cancel", m.DeleteTarget)
-		s.WriteString("\n" + StyleErrorBadge.Render("  "+navHint))
-	} else {
-		s.WriteString("\n" + StyleHelp.Render("  "+navHint))
-	}
-	return s.String()
-}
-
 func (m Model) renderProcessesTab() string {
 	var s strings.Builder
 	s.WriteString(StyleHeader.Render("Active Android Processes (ps -A)") + "\n\n")

@@ -2,6 +2,16 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.8.0] - 2026-11-07
+
+### DiskMan Storage 2.0 File Workstation
+* Multi-file selection with visual badges using [Space] to mark items and [a] to select or deselect all.
+* Bidirectional file transfer: pull marked files to PC [d] into ~/Downloads, and upload host files or folders [u] directly to the current phone directory.
+* Device-side file operations: copy [c], cut [m], and paste [p] across directories with real-time clipboard badge indicators.
+* Directory creation [n] with interactive modal prompt.
+* In-place item renaming [R] with modal prompt pre-filled with the current file name.
+* Batch deletion [x] or [Delete] with safety confirmation and optimistic cache removal.
+
 ## [v0.7.3] - 2026-11-07
 
 ### Maintenance & Distribution

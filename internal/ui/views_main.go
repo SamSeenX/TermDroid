@@ -20,6 +20,10 @@ func (m Model) View() string {
 		return m.renderTextModal()
 	}
 
+	if m.StorageModalOpen {
+		return m.renderStorageModal()
+	}
+
 	var b strings.Builder
 
 	b.WriteString(m.renderHeader())
