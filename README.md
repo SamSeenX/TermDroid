@@ -19,11 +19,28 @@ TermDroid is a high-performance terminal cockpit for macOS, Linux, and Windows t
   * ADB (Android Platform Tools)
   * Scrcpy
 
-## Quick Start
+## Installation
+
+### Option 1: Download Pre-compiled Binary (Recommended)
+
+Download the ready-to-run executable for your operating system from [Releases](https://github.com/SamSeenX/TermDroid/releases):
+
+* **macOS Apple Silicon**: `termdroid-v*-darwin-arm64.tar.gz`
+* **macOS Intel**: `termdroid-v*-darwin-amd64.tar.gz`
+* **Linux 64-bit**: `termdroid-v*-linux-amd64.tar.gz`
+* **Linux ARM64**: `termdroid-v*-linux-arm64.tar.gz`
+* **Windows 64-bit**: `termdroid-v*-windows-amd64.zip`
+
+Extract the archive and run the executable directly.
+
+### Option 2: Build from Source
 
 ```bash
 # Build the binary
 go build -o termdroid .
+```
+
+## Quick Start
 
 # Launch interactive TUI
 ./termdroid
