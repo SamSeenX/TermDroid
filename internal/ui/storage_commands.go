@@ -55,11 +55,11 @@ func PullStorageItemCmd(exec *bridge.Executor, remotePaths []string, localDir st
 
 func PushStorageItemCmd(exec *bridge.Executor, localPath, remoteDir string) tea.Cmd {
 	return func() tea.Msg {
-		err := storage.PushDeviceFile(exec, localPath, remoteDir)
+		targetDir, err := storage.PushDeviceFile(exec, localPath, remoteDir)
 		if err != nil {
 			return StatusMsg(fmt.Sprintf("Push failed: %v", err))
 		}
-		return StatusMsg(fmt.Sprintf("Uploaded %s to device", filepath.Base(localPath)))
+		return StatusMsg(fmt.Sprintf("Uploaded %s to %s", filepath.Base(localPath), targetDir))
 	}
 }
 

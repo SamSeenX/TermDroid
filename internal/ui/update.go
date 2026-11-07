@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 	"termdroid/internal/bridge"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -45,7 +46,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.ActiveTab == TabStorage {
 			m.IsLoading = false
 		}
-		if m.Storage != nil {
+		if m.Storage != nil && !isActionStatus(m.Status) {
 			m.Status = fmt.Sprintf("Storage: %s used of %s", m.Storage.UsedSpace, m.Storage.TotalSpace)
 		}
 		return m, nil
@@ -112,4 +113,14 @@ func (m Model) handleDevicesLoaded(msg DevicesLoadedMsg) (tea.Model, tea.Cmd) {
 		m.Status = "Monitoring for USB cable connection..."
 	}
 	return m, nil
+}
+
+func isActionStatus(s string) bool {
+	prefixes := []string{"Uploaded", "Pulled", "Deleted", "Renamed", "Created", "Moved", "Copied"}
+	for _, p := range prefixes {
+		if strings.HasPrefix(s, p) {
+			return true
+		}
+	}
+	return false
 }
