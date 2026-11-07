@@ -21,7 +21,20 @@ TermDroid is a high-performance terminal cockpit for macOS, Linux, and Windows t
 
 ## Installation
 
-### Option 1: Download Pre-compiled Binary (Recommended)
+### Option 1: Homebrew (macOS)
+
+```bash
+brew tap SamSeenX/apps
+brew install termdroid
+```
+
+Or in a single command:
+
+```bash
+brew install SamSeenX/apps/termdroid
+```
+
+### Option 2: Download Pre-compiled Binary (macOS, Linux, Windows)
 
 Download the ready-to-run executable for your operating system from [Releases](https://github.com/SamSeenX/TermDroid/releases):
 
