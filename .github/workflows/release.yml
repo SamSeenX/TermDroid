@@ -19,23 +19,23 @@ jobs:
           - goos: darwin
             goarch: arm64
             artifact_name: termdroid-darwin-arm64
-            archive_name: termdroid-v${{ github.ref_name }}-darwin-arm64.tar.gz
+            archive_name: termdroid-${{ github.ref_name }}-darwin-arm64.tar.gz
           - goos: darwin
             goarch: amd64
             artifact_name: termdroid-darwin-amd64
-            archive_name: termdroid-v${{ github.ref_name }}-darwin-amd64.tar.gz
+            archive_name: termdroid-${{ github.ref_name }}-darwin-amd64.tar.gz
           - goos: linux
             goarch: amd64
             artifact_name: termdroid-linux-amd64
-            archive_name: termdroid-v${{ github.ref_name }}-linux-amd64.tar.gz
+            archive_name: termdroid-${{ github.ref_name }}-linux-amd64.tar.gz
           - goos: linux
             goarch: arm64
             artifact_name: termdroid-linux-arm64
-            archive_name: termdroid-v${{ github.ref_name }}-linux-arm64.tar.gz
+            archive_name: termdroid-${{ github.ref_name }}-linux-arm64.tar.gz
           - goos: windows
             goarch: amd64
             artifact_name: termdroid.exe
-            archive_name: termdroid-v${{ github.ref_name }}-windows-amd64.zip
+            archive_name: termdroid-${{ github.ref_name }}-windows-amd64.zip
 
     steps:
       - name: Checkout Repository
