@@ -22,10 +22,18 @@ func GetDefaultDownloadDir() string {
 	return home
 }
 
-func PushDeviceFile(exec *bridge.Executor, localPath, remoteDir string) error {
+func ResolveUploadDestination(remoteDir string) string {
+	remoteDir = strings.TrimSpace(remoteDir)
+	if remoteDir == "" || remoteDir == "/sdcard" || remoteDir == "/sdcard/" {
+		return "/sdcard/Download/TermDroid"
+	}
+	return remoteDir
+}
+
+func PushDeviceFile(exec *bridge.Executor, localPath, remoteDir string) (string, error) {
 	localPath = strings.TrimSpace(localPath)
 	if localPath == "" {
-		return errors.New("local path cannot be empty")
+		return "", errors.New("local path cannot be empty")
 	}
 	if strings.HasPrefix(localPath, "~/") {
 		home, err := os.UserHomeDir()
@@ -34,10 +42,28 @@ func PushDeviceFile(exec *bridge.Executor, localPath, remoteDir string) error {
 		}
 	}
 	if _, err := os.Stat(localPath); err != nil {
-		return fmt.Errorf("local file does not exist: %w", err)
+		return "", fmt.Errorf("local file does not exist: %w", err)
 	}
-	_, err := exec.RunADBWithTimeout(120*time.Second, "push", localPath, remoteDir)
-	return err
+
+	targetDir := ResolveUploadDestination(remoteDir)
+	mkdirQuoted := fmt.Sprintf("\"%s\"", targetDir)
+	exec.RunADBWithTimeout(5*time.Second, "shell", "mkdir", "-p", mkdirQuoted)
+
+	_, err := exec.RunADBWithTimeout(120*time.Second, "push", localPath, targetDir)
+	if err != nil {
+		return "", err
+	}
+
+	destFile := filepath.ToSlash(filepath.Join(targetDir, filepath.Base(localPath)))
+	TriggerMediaScan(exec, destFile)
+
+	return targetDir, nil
+}
+
+func TriggerMediaScan(exec *bridge.Executor, filePath string) {
+	fileUri := fmt.Sprintf("file://%s", filePath)
+	exec.RunADBWithTimeout(3*time.Second, "shell", "am", "broadcast", "-a", "android.intent.action.MEDIA_SCANNER_SCAN_FILE", "-d", fileUri)
+	exec.RunADBWithTimeout(3*time.Second, "shell", "content", "call", "--uri", "content://media", "--method", "scan_volume", "--extra", "volume:s:external_primary")
 }
 
 func CopyDeviceItem(exec *bridge.Executor, srcPath, destDir string) error {

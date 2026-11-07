@@ -27,12 +27,12 @@ func TestStorageOpsValidation(t *testing.T) {
 		t.Errorf("expected error for empty new name")
 	}
 
-	err = PushDeviceFile(nil, "", "/sdcard")
+	_, err = PushDeviceFile(nil, "", "/sdcard")
 	if err == nil {
 		t.Errorf("expected error for empty local path")
 	}
 
-	err = PushDeviceFile(nil, "/non/existent/path/termdroid_test.tmp", "/sdcard")
+	_, err = PushDeviceFile(nil, "/non/existent/path/termdroid_test.tmp", "/sdcard")
 	if err == nil {
 		t.Errorf("expected error for non-existent local file")
 	}
@@ -40,5 +40,17 @@ func TestStorageOpsValidation(t *testing.T) {
 	_, err = BatchPullDeviceFiles(nil, nil, "")
 	if err == nil {
 		t.Errorf("expected error for empty remote paths")
+	}
+}
+
+func TestResolveUploadDestination(t *testing.T) {
+	if got := ResolveUploadDestination(""); got != "/sdcard/Download/TermDroid" {
+		t.Errorf("expected /sdcard/Download/TermDroid, got %s", got)
+	}
+	if got := ResolveUploadDestination("/sdcard"); got != "/sdcard/Download/TermDroid" {
+		t.Errorf("expected /sdcard/Download/TermDroid, got %s", got)
+	}
+	if got := ResolveUploadDestination("/sdcard/DCIM"); got != "/sdcard/DCIM" {
+		t.Errorf("expected /sdcard/DCIM, got %s", got)
 	}
 }

@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.8.1] - 2026-11-07
+
+### Upload Enhancements & Media Indexing
+* Default upload destination set to /sdcard/Download/TermDroid when at root directory for instant access in Android file managers.
+* Automatic MediaStore broadcast indexing upon upload completion so images, audio, and videos register immediately in phone gallery and download apps.
+* Persistent status confirmation toast preventing background storage capacity re-scans from overwriting upload, delete, and transfer messages.
+
 ## [v0.8.0] - 2026-11-07
 
 ### DiskMan Storage 2.0 File Workstation
