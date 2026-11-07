@@ -1,6 +1,6 @@
 # TermDroid
 
-TermDroid is a high-performance terminal cockpit for macOS that connects, mirrors, monitors, and manages Android devices over USB and Wi-Fi.
+TermDroid is a high-performance terminal cockpit for macOS, Linux, and Windows that connects, mirrors, monitors, and manages Android devices over USB and Wi-Fi.
 
 ## Key Features
 
@@ -13,17 +13,17 @@ TermDroid is a high-performance terminal cockpit for macOS that connects, mirror
 
 ## Prerequisites
 
-* macOS 12+ (Apple Silicon or Intel)
+* macOS, Linux (with Wayland or X11), or Windows 10/11
 * Android device with Developer Options and USB Debugging enabled
 * External tools:
-  * ADB (Android Platform Tools): `brew install android-platform-tools`
-  * Scrcpy: `brew install scrcpy`
+  * ADB (Android Platform Tools)
+  * Scrcpy
 
 ## Quick Start
 
 ```bash
 # Build the binary
-go build -o termdroid main.go
+go build -o termdroid .
 
 # Launch interactive TUI
 ./termdroid
