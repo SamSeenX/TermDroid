@@ -2,6 +2,12 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.7.3] - 2026-11-07
+
+### Maintenance & Distribution
+* Official Homebrew formula published to `SamSeenX/homebrew-apps` tap (`brew install SamSeenX/apps/termdroid`).
+* Removed legacy design document PDF from repository and added `*.pdf` to gitignore to streamline repository size.
+
 ## [v0.7.2] - 2026-11-07
 
 ### Automated Release Pipeline & Pre-Compiled Binaries

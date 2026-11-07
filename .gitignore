@@ -17,6 +17,7 @@ go.work
 # Temp and logs
 *.log
 /tmp/
+*.pdf
 
 # Configuration and credentials
 .config/
