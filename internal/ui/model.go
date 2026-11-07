@@ -67,6 +67,12 @@ type Model struct {
 	IsScanningStorage bool
 	DeleteTarget  string
 	ConfirmDelete bool
+	SelectedFiles map[string]bool
+	ClipboardPaths []string
+	ClipboardIsCut bool
+	StorageModalOpen bool
+	StorageModalType StorageModalAction
+	StorageModalInput string
 }
 
 func InitialModel() Model {
@@ -83,6 +89,8 @@ func InitialModel() Model {
 		IsLoading:     false,
 		Wizard:        InitialWizardState(),
 		SavedPIN:      cfg.SavedPIN,
+		SelectedFiles: make(map[string]bool),
+		StorageModalType: ModalNone,
 	}
 }
 
