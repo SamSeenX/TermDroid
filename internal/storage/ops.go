@@ -22,6 +22,26 @@ func GetDefaultDownloadDir() string {
 	return home
 }
 
+func CleanHostPath(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if (strings.HasPrefix(raw, "'") && strings.HasSuffix(raw, "'")) ||
+		(strings.HasPrefix(raw, "\"") && strings.HasSuffix(raw, "\"")) {
+		if len(raw) >= 2 {
+			raw = raw[1 : len(raw)-1]
+		}
+	}
+	raw = strings.ReplaceAll(raw, "\\ ", " ")
+	raw = strings.ReplaceAll(raw, "\\(", "(")
+	raw = strings.ReplaceAll(raw, "\\)", ")")
+	if strings.HasPrefix(raw, "~/") {
+		home, err := os.UserHomeDir()
+		if err == nil {
+			raw = filepath.Join(home, raw[2:])
+		}
+	}
+	return strings.TrimSpace(raw)
+}
+
 func ResolveUploadDestination(remoteDir string) string {
 	remoteDir = strings.TrimSpace(remoteDir)
 	if remoteDir == "" || remoteDir == "/sdcard" || remoteDir == "/sdcard/" {
@@ -31,15 +51,9 @@ func ResolveUploadDestination(remoteDir string) string {
 }
 
 func PushDeviceFile(exec *bridge.Executor, localPath, remoteDir string) (string, error) {
-	localPath = strings.TrimSpace(localPath)
+	localPath = CleanHostPath(localPath)
 	if localPath == "" {
 		return "", errors.New("local path cannot be empty")
-	}
-	if strings.HasPrefix(localPath, "~/") {
-		home, err := os.UserHomeDir()
-		if err == nil {
-			localPath = filepath.Join(home, localPath[2:])
-		}
 	}
 	if _, err := os.Stat(localPath); err != nil {
 		return "", fmt.Errorf("local file does not exist: %w", err)
@@ -61,7 +75,7 @@ func PushDeviceFile(exec *bridge.Executor, localPath, remoteDir string) (string,
 }
 
 func TriggerMediaScan(exec *bridge.Executor, filePath string) {
-	fileUri := fmt.Sprintf("file://%s", filePath)
+	fileUri := fmt.Sprintf("'file://%s'", strings.Trim(filePath, "'\""))
 	exec.RunADBWithTimeout(3*time.Second, "shell", "am", "broadcast", "-a", "android.intent.action.MEDIA_SCANNER_SCAN_FILE", "-d", fileUri)
 	exec.RunADBWithTimeout(3*time.Second, "shell", "content", "call", "--uri", "content://media", "--method", "scan_volume", "--extra", "volume:s:external_primary")
 }

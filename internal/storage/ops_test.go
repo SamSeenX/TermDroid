@@ -54,3 +54,21 @@ func TestResolveUploadDestination(t *testing.T) {
 		t.Errorf("expected /sdcard/DCIM, got %s", got)
 	}
 }
+
+func TestCleanHostPath(t *testing.T) {
+	cases := []struct {
+		input    string
+		expected string
+	}{
+		{"'path/to/file.jpg'", "path/to/file.jpg"},
+		{"\"path/to/file.jpg\"", "path/to/file.jpg"},
+		{"path/to/my\\ file.jpg", "path/to/my file.jpg"},
+		{"path/to/flyer\\ \\(A4\\).png", "path/to/flyer (A4).png"},
+	}
+
+	for _, c := range cases {
+		if got := CleanHostPath(c.input); got != c.expected {
+			t.Errorf("CleanHostPath(%s) = %s, expected %s", c.input, got, c.expected)
+		}
+	}
+}

@@ -116,7 +116,10 @@ func (m Model) handleDevicesLoaded(msg DevicesLoadedMsg) (tea.Model, tea.Cmd) {
 }
 
 func isActionStatus(s string) bool {
-	prefixes := []string{"Uploaded", "Pulled", "Deleted", "Renamed", "Created", "Moved", "Copied"}
+	prefixes := []string{
+		"Uploaded", "Pulled", "Deleted", "Renamed", "Created", "Moved", "Copied",
+		"Push", "Pull", "Delete", "Failed", "Error",
+	}
 	for _, p := range prefixes {
 		if strings.HasPrefix(s, p) {
 			return true
