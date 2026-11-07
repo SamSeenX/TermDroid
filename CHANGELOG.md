@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.8.2] - 2026-11-07
+
+### Path Sanitization & Special Character Handling
+* Robust CleanHostPath utility stripping single and double quotes, unescaping backslashes, and expanding home directories from dragged or pasted paths.
+* Safe Android shell quotation for filenames containing spaces, parentheses, and special characters during MediaStore broadcasts.
+* Protected error status toasts preventing silent failure and keeping actionable diagnostics visible.
+
 ## [v0.8.1] - 2026-11-07
 
 ### Upload Enhancements & Media Indexing
