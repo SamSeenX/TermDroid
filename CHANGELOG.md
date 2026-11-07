@@ -2,6 +2,13 @@
 
 All notable changes to TermDroid will be documented in this file.
 
+## [v0.7.2] - 2026-11-07
+
+### Automated Release Pipeline & Pre-Compiled Binaries
+* Automated GitHub Actions CI workflow to build and package standalone binaries on every tag release.
+* Standalone pre-compiled releases for macOS Apple Silicon (arm64), macOS Intel (amd64), Linux (amd64, arm64), and Windows (amd64).
+* Compressed zip and tar archives ready for instant download without compiling from source.
+
 ## [v0.7.1] - 2026-11-05
 
 ### Universal Cross-Platform Support
